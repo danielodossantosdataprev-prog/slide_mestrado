@@ -334,6 +334,8 @@
             \item variação da frequência cardíaca ao longo do dia
             \item carga de ectopia
           \end{itemize}
+    \item Dois protocolos de extração: \textbf{A}, segmentos de 5 min com
+          44 marcadores; \textbf{B}, segmentos de 30\,s
     \item Escolher os marcadores olhando o desfecho de toda a coorte
           superestima o desempenho \cite{kapoor2023leakage}
   \end{itemize}
@@ -370,6 +372,20 @@
       partição.}
     \end{column}
   \end{columns}
+\end{frame}
+
+\begin{frame}{Arquitetura da CNN}
+  \centering
+  \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{figuras/arquitetura_cnn.jpg}
+  \fonte{Quatro blocos convolucionais, \textit{pooling} global (média e máximo) e
+  cabeça de classificação. A capacidade varia com o número de canais.}
+\end{frame}
+
+\begin{frame}{Arquitetura da ResNet-18}
+  \centering
+  \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{figuras/arquitetura_resnet.jpg}
+  \fonte{Quatro estágios de dois blocos básicos; a ResNet-50 usa o bloco de
+  gargalo (à direita).}
 \end{frame}
 
 \begin{frame}{Abordagem 3: representações aprendidas}
@@ -437,6 +453,254 @@
 % ==============================================================================
 \section{Resultados preliminares}
 % ==============================================================================
+
+\begin{frame}{Biomarcadores: modelos do protocolo A}
+  \centering
+  \footnotesize
+  \begin{tabular}{lrcc}
+    \toprule
+    Modelo & Variáveis & AUC [IC 95\,\%] & AP \\
+    \midrule
+    Clínicas (referência)           & 6  & 0,661 [0,577--0,741] & 0,233 \\
+    \midrule
+    Marcadores, logística L2        & 44 & 0,589 [0,507--0,671] & 0,180 \\
+    Marcadores, logística L1        & 44 & 0,585 [0,503--0,666] & 0,163 \\
+    Marcadores, PCA (4) + logística & 44 & \auc{0,624} [0,535--0,708] & 0,232 \\
+    Marcadores, floresta aleatória  & 44 & 0,621 [0,537--0,701] & 0,184 \\
+    \midrule
+    Clínicas + marcadores, L2       & 50 & 0,672 [0,597--0,745] & 0,201 \\
+    Clínicas + marcadores, L1       & 50 & \auc{0,681} [0,604--0,756] & 0,191 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.4cm}
+  \raggedright
+  \small
+  \begin{itemize}
+    \item Sozinhos, os marcadores ficam abaixo das seis variáveis clínicas
+    \item Somados a elas, o ganho ($+0{,}020$ [$-0{,}047$; $+0{,}095$]) não
+          é distinguível de zero
+  \end{itemize}
+  \fonte{AP de referência (acaso) = prevalência = 0,106.}
+\end{frame}
+
+\begin{frame}{Biomarcadores: o otimismo da seleção}
+  \centering
+  \footnotesize
+  \begin{tabular}{llcc}
+    \toprule
+    Seleção & Modelo & AUC [IC 95\,\%] & $\Delta$ sobre clínicas \\
+    \midrule
+    Coorte inteira     & 4 marcadores            & 0,627 [0,541--0,710] & --- \\
+    Coorte inteira     & 2 marcadores            & 0,647 [0,559--0,727] & --- \\
+    Coorte inteira     & clínicas + 4 marcadores & 0,684 [0,601--0,762] & $+0{,}023$ \\
+    \midrule
+    Dentro da partição & 4 marcadores            & \alert{0,580} [0,497--0,660] & --- \\
+    Dentro da partição & clínicas + 4 marcadores & \alert{0,640} [0,553--0,726] & $-0{,}021$ \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.4cm}
+  \raggedright
+  \small
+  \begin{itemize}
+    \item Escolher os marcadores olhando o desfecho de \textbf{todos} os
+          pacientes eleva a AUC em cerca de 0,05
+    \item Refeita a seleção só no treino de cada partição, o intervalo inclui
+          o acaso
+    \item Por isso, o modelo final usa marcadores \textbf{pré-especificados}
+          pela literatura
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Redes convolucionais: capacidade e janela}
+  \centering
+  \footnotesize
+  \begin{tabular}{llrcc}
+    \toprule
+    Rede & Janela & Parâmetros & AUC partições & AUC fora da partição [IC 95\,\%] \\
+    \midrule
+    Mínima  & 2 min & 14\,425  & 0,543 $\pm$ 0,059 & 0,523 [0,440--0,612] \\
+    Simples & 2 min & 109\,361 & 0,500 $\pm$ 0,067 & 0,486 [0,402--0,578] \\
+    Média   & 2 min & 418\,145 & 0,494 $\pm$ 0,119 & 0,485 [0,400--0,574] \\
+    \midrule
+    Mínima  & 10 s  & 14\,425  & 0,589 $\pm$ 0,090 & \auc{0,554} [0,467--0,634] \\
+    Simples & 10 s  & 109\,361 & 0,509 $\pm$ 0,051 & 0,491 [0,411--0,578] \\
+    Média   & 10 s  & 418\,145 & 0,495 $\pm$ 0,118 & 0,485 [0,406--0,569] \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.4cm}
+  \raggedright
+  \small
+  \begin{itemize}
+    \item Todos os intervalos incluem 0,5: nenhuma rede se distingue do acaso
+    \item A rede menor obteve os maiores valores; mais capacidade não ajudou
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Redes residuais: largura e profundidade}
+  \centering
+  \footnotesize
+  \begin{tabular}{llrc}
+    \toprule
+    Rede & Janela & Parâmetros & AUC fora da partição [IC 95\,\%] \\
+    \midrule
+    ResNet-18 mínima   & 5,12 s & 78\,169      & \auc{0,562} [0,475--0,642] \\
+    ResNet-18 reduzida & 2 min  & 1\,029\,985  & 0,504 [0,420--0,588] \\
+    ResNet-18 completa & 2 min  & 3\,976\,385  & 0,508 [0,431--0,588] \\
+    ResNet-18 completa & 5,12 s & 3\,976\,385  & 0,492 [0,411--0,577] \\
+    \midrule
+    ResNet-34          & 2 min  & 7\,350\,721  & 0,514 [0,429--0,601] \\
+    ResNet-50          & 2 min  & 16\,479\,937 & 0,536 [0,448--0,618] \\
+    ResNet-18 + \textit{Transformer} & 2 min & --- & 0,493 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.4cm}
+  \raggedright
+  \small
+  \begin{itemize}
+    \item Quadruplicar os parâmetros (ResNet-18 $\to$ ResNet-50) não mudou o
+          desempenho
+    \item A ResNet-50 tem mais de 53 mil parâmetros por paciente de treino e
+          memoriza o treino nas primeiras épocas
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Redes: busca de hiperparâmetros e fusão com clínicas}
+  \centering
+  \footnotesize
+  \begin{tabular}{llc}
+    \toprule
+    Modelo & Janela & AUC fora da partição [IC 95\,\%] \\
+    \midrule
+    \multicolumn{3}{l}{\textit{Busca bayesiana (Optuna, 25 tentativas por família)}} \\
+    Convolucional & 1 min & 0,556 [0,464--0,647] \\
+    Residual      & 1 min & 0,496 [0,411--0,584] \\
+    \midrule
+    \multicolumn{3}{l}{\textit{Fusão da ResNet-18 com as seis variáveis clínicas}} \\
+    Treinamento conjunto      & 2 min & 0,516 [0,433--0,603] \\
+    Taxa reduzida no extrator & 2 min & \auc{0,579} [0,492--0,669] \\
+    Extrator congelado        & 2 min & 0,577 [0,491--0,659] \\
+    \midrule
+    Só as variáveis clínicas (logística) & --- & \auc{0,661} [0,577--0,741] \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.3cm}
+  \raggedright
+  \small
+  \begin{itemize}
+    \item A busca não superou as configurações manuais
+    \item Na fusão, o desempenho vem das clínicas; treinar o sinal piora
+    \item Sem a restrição ao ritmo sinusal (703 pacientes), a ResNet-18 chega
+          a 0,575 [0,511--0,642]: aprende a fibrilação atrial, não a morte
+          súbita
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Redes: métricas com limiar de Youden}
+  \centering
+  \tiny
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{llcccccc}
+    \toprule
+    Rede & Janela & AUC & AP & Sens. & Espec. & VPP & VPN \\
+    \midrule
+    CNN mínima & 2 min & 0,523 & 0,139 & 0,582 & 0,448 & 0,111 & 0,900 \\
+    CNN simples & 2 min & 0,486 & 0,121 & 0,364 & 0,645 & 0,109 & 0,895 \\
+    CNN média & 2 min & 0,485 & 0,126 & 0,309 & 0,688 & 0,106 & 0,893 \\
+    CNN mínima & 10 s & 0,554 & 0,132 & 0,691 & 0,346 & 0,112 & 0,904 \\
+    CNN simples & 10 s & 0,491 & 0,119 & 0,400 & 0,530 & 0,092 & 0,881 \\
+    CNN média & 10 s & 0,485 & 0,110 & 0,455 & 0,485 & 0,095 & 0,882 \\
+    \midrule
+    ResNet-18 mínima & 5,12 s & 0,562 & 0,160 & 0,455 & 0,654 & 0,135 & 0,910 \\
+    ResNet-18 reduzida & 2 min & 0,504 & 0,117 & 0,582 & 0,437 & 0,110 & 0,898 \\
+    ResNet-18 completa & 2 min & 0,508 & 0,121 & 0,455 & 0,461 & 0,091 & 0,877 \\
+    ResNet-18 completa & 5,12 s & 0,492 & 0,129 & 0,582 & 0,442 & 0,110 & 0,899 \\
+    ResNet-34 & 2 min & 0,514 & 0,122 & 0,509 & 0,517 & 0,112 & 0,898 \\
+    ResNet-50 & 2 min & 0,536 & 0,137 & 0,455 & 0,511 & 0,100 & 0,887 \\
+    ResNet-18 + Transformer & 2 min & 0,493 & 0,134 & 0,291 & 0,703 & 0,105 & 0,893 \\
+    \midrule
+    Convolucional, busca & 1 min & 0,556 & 0,189 & 0,509 & 0,552 & 0,119 & 0,904 \\
+    Residual, busca & 1 min & 0,496 & 0,122 & 0,455 & 0,565 & 0,111 & 0,897 \\
+    \midrule
+    Fusão, treino conjunto & 2 min & 0,516 & 0,141 & 0,418 & 0,548 & 0,099 & 0,888 \\
+    Fusão, taxa reduzida & 2 min & 0,579 & 0,180 & 0,455 & 0,673 & 0,142 & 0,912 \\
+    Fusão, extrator congelado & 2 min & 0,577 & 0,146 & 0,727 & 0,424 & 0,131 & 0,929 \\
+    Fusão, treino conjunto & 10 s & 0,491 & 0,113 & 0,400 & 0,569 & 0,100 & 0,889 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.2cm}
+  \raggedright
+  \scriptsize
+  Sob classificação aleatória, AP e VPP $\approx$ prevalência (0,106) e
+  VPN $\approx$ 0,894: as redes ficam praticamente nesse nível.
+\end{frame}
+
+\begin{frame}{Representações: rede multitarefa e contrastivo}
+  \centering
+  \footnotesize
+  \begin{tabular}{lccc}
+    \toprule
+    Modelo & AUC [IC 95\,\%] & Sens. & Espec. \\
+    \midrule
+    Seis variáveis clínicas          & 0,661 [0,580--0,743] & 0,58 & 0,67 \\
+    \midrule
+    \rowcolor{destaque!12}
+    Rede multitarefa (só Holter)     & \auc{0,682} [0,600--0,763] & 0,51 & 0,80 \\
+    Rede multitarefa + clínicas      & \auc{0,702} [0,621--0,780] & 0,55 & 0,74 \\
+    Valores previstos + clínicas     & 0,646 [0,557--0,726] & 0,49 & 0,72 \\
+    Contrastivo                      & 0,590 [0,501--0,677] & 0,64 & 0,45 \\
+    Contrastivo + clínicas           & 0,634 [0,551--0,727] & 0,64 & 0,57 \\
+    \midrule
+    Clínicas + FEVE + Pro-BNP        & 0,705 [0,617--0,780] & 0,64 & 0,68 \\
+    Clínicas + ecocardiograma        & 0,720 [0,640--0,789] & 0,65 & 0,64 \\
+    Clínicas + todos os exames       & 0,733 [0,656--0,804] & 0,71 & 0,64 \\
+    Clínicas + todos os exames + rede & 0,728 [0,652--0,798] & 0,73 & 0,64 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.3cm}
+  \raggedright
+  \small
+  \begin{itemize}
+    \item Sem nenhuma variável clínica, a representação iguala as clínicas;
+          a ResNet-18 treinada no desfecho tinha obtido 0,508
+    \item Com as clínicas, chega ao nível de clínicas + FEVE + Pro-BNP medidos
+  \end{itemize}
+  \fonte{Limiar de Youden escolhido no treino de cada partição.}
+\end{frame}
+
+\begin{frame}{Aprendizado autossupervisionado}
+  \centering
+  \footnotesize
+  \begin{tabular}{lcl}
+    \toprule
+    Método (sem rótulos) & AUC [IC 95\,\%] & O que aconteceu no treino \\
+    \midrule
+    Extrator aleatório (controle) & 0,529 [0,437--0,615] & sem treino \\
+    Autoencoder                   & 0,494 [0,413--0,576] & perda praticamente constante \\
+    Mascarado                     & 0,555 [0,476--0,649] & perda praticamente constante \\
+    Contrastivo                   & \auc{0,590} [0,501--0,677] & perda de validação em queda \\
+    \midrule
+    Rede multitarefa              & \auc{0,682} [0,600--0,763] & 45 atributos clínicos \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.5cm}
+  \raggedright
+  \small
+  \begin{itemize}
+    \item Só o contrastivo aprendeu algo além do extrator aleatório:
+          reconhece janelas do mesmo paciente
+    \item Sem rótulos, os padrões encontrados são fracos; com as clínicas,
+          nenhum dos três difere delas
+    \item Orientar a rede por atributos clínicos foi o que fez diferença
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{Comparação das abordagens}
   \centering
