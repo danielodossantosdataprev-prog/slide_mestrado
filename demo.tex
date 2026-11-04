@@ -11,9 +11,9 @@
 \usepackage[portuguese]{babel}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
-\usetheme[progressbar=frametitle]{metropolis}
+\usetheme[progressbar=frametitle, sectionpage=none]{metropolis}
 \bibliographystyle{rusnat}
-\usetikzlibrary{arrows,arrows.meta,positioning,calc,fit,shapes.misc}
+\usetikzlibrary{arrows,arrows.meta,positioning,calc,fit,shapes.misc,decorations.pathreplacing}
 
 % ---- cores (as do tema metropolis) e estilos dos diagramas ----
 \definecolor{boxcolor}{HTML}{B9DCFF}
@@ -25,6 +25,7 @@
   caixa/.style={draw=azulesc!60, fill=azulesc!6, rounded corners=2pt,
                 align=center, inner sep=4pt, font=\footnotesize},
   caixad/.style={caixa, draw=destaque, fill=destaque!12},
+  caixav/.style={caixa, draw=verde!70!black, fill=verde!10},
   seta/.style={-{Stealth[length=5pt]}, azulesc!70, thick},
   rotulo/.style={font=\scriptsize, text=cinza},
 }
@@ -32,11 +33,12 @@
 \renewcommand{\bibsection}{}
 \newcommand{\auc}[1]{\textbf{#1}}
 \newcommand{\fonte}[1]{\par\vfill{\scriptsize\color{cinza}#1}}
+\newcommand{\msg}[1]{\par\vfill\begin{center}\colorbox{destaque!15}{\parbox{0.92\linewidth}{\centering\small #1}}\end{center}}
 
 \title{Aprendizado de máquina para estratificação\\
   de risco de morte súbita cardíaca\\
   a partir do Holter de 24 horas}
-\subtitle{Apresentação da proposta de dissertação}
+\subtitle{Defesa de dissertação de mestrado}
 \author{Daniel Oliveira dos Santos\\[2pt]
   {\footnotesize Orientador: Prof. Dr. João Paulo do Vale Madeiro\\
    Coorientador: Prof. José Maria da Silva Monteiro Filho}}
@@ -47,9 +49,11 @@
 
 \begin{document}
 
+% 1
 \maketitle
 
-\begin{frame}{Sumário}
+% 2
+\begin{frame}{Roteiro}
   \setbeamertemplate{section in toc}[sections numbered]
   \tableofcontents[hideallsubsections]
 \end{frame}
@@ -58,769 +62,961 @@
 \section{Introdução}
 % ==============================================================================
 
-\begin{frame}{Morte súbita cardíaca: o problema}
+% 3
+\begin{frame}{Motivação do problema}
+  \begin{itemize}
+    \item Na insuficiência cardíaca, a morte ocorre por duas vias:
+      \begin{itemize}
+        \item \textbf{falência de bomba}: deterioração progressiva;
+        \item \textbf{morte súbita cardíaca (MSC)}: evento abrupto, em geral por
+          arritmia ventricular, em paciente muitas vezes estável.
+      \end{itemize}
+    \item A MSC responde por cerca de \textbf{metade} das mortes nessa
+      população \cite{tomaselli2004sudden}.
+    \item Prevenção: o \textbf{cardiodesfibrilador implantável}, que reduziu a
+      mortalidade \cite{bardy2005amiodarone}.
+    \item A indicação baseia-se na \textbf{fração de ejeção (FEVE)}, critério
+      imperfeito \cite{zeppenfeld2022esc}:
+      \begin{itemize}
+        \item muitos pacientes com o dispositivo nunca o utilizam;
+        \item parte das mortes súbitas ocorre com FEVE acima do limiar.
+      \end{itemize}
+  \end{itemize}
+  \msg{Há espaço para ferramentas que estratifiquem melhor o risco de MSC.}
+\end{frame}
+
+% 4
+\begin{frame}{Modelos preditivos para a morte súbita cardíaca}
   \begin{columns}[T]
-    \begin{column}{0.56\textwidth}
-      \begin{itemize}
-        \item Morte de causa cardíaca, inesperada e rápida, em geral por
-              arritmia ventricular
-        \item Na insuficiência cardíaca, disputa espaço com a morte por
-              \textbf{falência de bomba}, de mecanismo mecânico e progressivo
-        \item Prevenir exige saber \textbf{quem} está em risco
-              \textbf{elétrico}, e não apenas quem está mais grave
-        \item O evento é raro mesmo nessa população: poucos casos para
-              aprender
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.40\textwidth}
-      \centering
-      \begin{tikzpicture}[node distance=5mm]
-        \node[caixa, minimum width=3.6cm] (ic) {Pacientes com\\insuficiência cardíaca};
-        \node[caixad, below left=7mm and -14mm of ic, minimum width=1.7cm] (msc) {Morte\\súbita};
-        \node[caixa, below right=7mm and -14mm of ic, minimum width=1.7cm] (fb) {Falência\\de bomba};
-        \draw[seta] (ic) -- (msc);
-        \draw[seta] (ic) -- (fb);
-        \node[rotulo, below=1mm of msc] {elétrica};
-        \node[rotulo, below=1mm of fb] {mecânica};
-      \end{tikzpicture}
-    \end{column}
+    \column{0.55\textwidth}
+    \begin{itemize}
+      \item Estimam, para cada paciente, a \textbf{probabilidade} do evento em
+        um horizonte definido.
+      \item Permitem ordenar os pacientes por risco, em vez de depender de um
+        único limiar clínico.
+      \item O \textbf{Holter de 24 horas} é não invasivo, barato e amplamente
+        disponível.
+      \item Capta ectopias, pausas e variações da frequência entre sono e
+        vigília.
+    \end{itemize}
+    \column{0.43\textwidth}
+    \centering
+    \begin{tikzpicture}[node distance=0.35cm]
+      \node[caixa, text width=3.6cm] (h) {Holter de 24 h\\3 derivações, 200 Hz};
+      \node[caixad, text width=3.6cm, below=of h] (m) {Modelo de\\aprendizado de máquina};
+      \node[caixav, text width=3.6cm, below=of m] (p) {Probabilidade de MSC\\em 4 anos};
+      \draw[seta] (h) -- (m);
+      \draw[seta] (m) -- (p);
+    \end{tikzpicture}
   \end{columns}
 \end{frame}
 
-\begin{frame}{Por que o Holter de 24 horas?}
-  \begin{columns}[c]
-    \begin{column}{0.42\textwidth}
+% 5
+\begin{frame}{O que a literatura tem feito}
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \begin{block}{Marcadores definidos por especialistas}
+      \small
       \begin{itemize}
-        \item Exame barato, não invasivo e de rotina
-        \item Observa o coração ao longo do dia, e não em poucos segundos
-        \item Capta ectopias, pausas e a variação da frequência entre sono e
-              vigília
-        \item Três derivações ortogonais (X, Y e Z), 200\,Hz: cerca de
-              17 milhões de amostras por paciente
+        \item VFC, ectopia, turbulência, dinâmica da repolarização.
+        \item Combinados com variáveis clínicas em modelos estatísticos ou de
+          aprendizado de máquina clássico.
+        \item Na base MUSIC: \cite{ramirez2017sudden, swee2026multimodal}.
       \end{itemize}
-    \end{column}
-    \begin{column}{0.56\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{figuras/ecg_tres_derivacoes.png}\\
-      {\scriptsize\color{cinza}Trecho de 10\,s de um paciente da coorte}
-    \end{column}
+    \end{block}
+    \column{0.49\textwidth}
+    \begin{block}{Redes profundas sobre o sinal}
+      \small
+      \begin{itemize}
+        \item Sucesso em diagnóstico: arritmias no Holter
+          \cite{hannun2019cardiologist}, ECG de 12 derivações
+          \cite{ribeiro2020automatic}.
+        \item Na predição de eventos, os melhores resultados usaram redes
+          \textbf{pré-treinadas} em grandes bases \cite{kim2025deep}.
+      \end{itemize}
+    \end{block}
   \end{columns}
 \end{frame}
 
-\begin{frame}{Objetivos e perguntas de pesquisa}
-  \textbf{Objetivo geral:} investigar se o Holter de 24\,h contém informação
-  para identificar, entre pacientes com insuficiência cardíaca, os que viriam
-  a sofrer morte súbita.
-
-  \vspace{0.4cm}
-  \textbf{Perguntas de pesquisa}
+% 6
+\begin{frame}{Desafios e lacunas}
+  \begin{itemize}
+    \item \textbf{Predição $\neq$ diagnóstico}: o evento ocorre meses ou anos
+      depois do Holter, e as coortes têm poucas centenas de pacientes.
+  \end{itemize}
+  \vspace{0.2cm}
   \begin{enumerate}
-    \item Redes profundas treinadas diretamente sobre o sinal superam os
-          marcadores clássicos do ECG?
-    \item Aprender representações do sinal (com rótulos substitutos ou sem
-          rótulos) ajuda quando há poucos eventos?
-    \item O Holter acrescenta informação às variáveis clínicas e aos exames
-          já medidos?
+    \item \textbf{Falta de comparação direta}: cada estudo avaliou uma única
+      abordagem, em coortes e protocolos diferentes.
+    \item \textbf{Avaliação otimista}: métricas por trecho do sinal (cada
+      paciente conta centenas de vezes) e seleção de variáveis com o
+      desfecho de toda a coorte \cite{kapoor2023leakage}.
+    \item \textbf{Fibrilação atrial na coorte}: ritmo fácil de reconhecer e de
+      pior prognóstico, que pode inflar a discriminação.
   \end{enumerate}
-
-  \vspace{0.3cm}
-  \alert{Restrição central:} 517 pacientes e apenas 55 eventos.
+  \msg{Comparar as abordagens nos mesmos pacientes, com avaliação por paciente
+    e em ritmo sinusal.}
 \end{frame}
 
-% ==============================================================================
-\section{Fundamentação teórica}
-% ==============================================================================
-
-\begin{frame}{Biomarcadores do Holter}
-  Medidas definidas por especialistas, extraídas com o NeuroKit2
-  \cite{makowski2021neurokit2} em segmentos de 30\,s:
-
-  \vspace{0.3cm}
-  \begin{columns}[T]
-    \begin{column}{0.32\textwidth}
-      \begin{block}{Variabilidade}
-        \footnotesize
-        SDNN, RMSSD, pNN50\\
-        Potência LF e HF\\
-        Poincaré (SD1, SD2)\\
-        Entropia amostral
-      \end{block}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{block}{Ectopia e ritmo}
-        \footnotesize
-        Carga de ectopia\\
-        Dupletes\\
-        Maior pausa\\
-        Frequência cardíaca média
-      \end{block}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{block}{Morfologia}
-        \footnotesize
-        Duração do QRS\\
-        Intervalos QT e QTc\\
-        Ondas P e T\\
-        Amplitude por derivação
-      \end{block}
-    \end{column}
-  \end{columns}
-
-  \vspace{0.4cm}
-  Cada marcador é resumido por paciente (média e desvio-padrão ao longo do
-  registro) e usado em uma regressão logística.
-\end{frame}
-
-\begin{frame}{Redes convolucionais 1D e a ResNet}
-  \begin{columns}[c]
-    \begin{column}{0.48\textwidth}
-      \begin{itemize}
-        \item Filtros deslizam ao longo do tempo e aprendem padrões locais
-              do sinal \cite{lecun1998gradient}
-        \item Camadas empilhadas combinam padrões em escalas maiores
-        \item A \textbf{ResNet} soma a entrada à saída de cada bloco,
-              o que permite treinar redes profundas \cite{he2016deep}
-        \item Bem-sucedidas no ECG quando há \textbf{muitos} exemplos
-              rotulados
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \centering
-      \begin{tikzpicture}[node distance=4mm]
-        \node (x) {$x$};
-        \node[caixa, below=of x, minimum width=2.6cm] (c1) {Conv1D + BN + ReLU};
-        \node[caixa, below=of c1, minimum width=2.6cm] (c2) {Conv1D + BN};
-        \node[draw, circle, inner sep=1pt, below=of c2] (soma) {$+$};
-        \node[below=of soma] (y) {$y = F(x) + x$};
-        \draw[seta] (x) -- (c1);
-        \draw[seta] (c1) -- (c2);
-        \draw[seta] (c2) -- (soma);
-        \draw[seta] (soma) -- (y);
-        \draw[seta, destaque] ($(x)+(0,-0.2)$) -- ++(1.9,0) |- (soma)
-          node[pos=0.25, right, font=\scriptsize, text=destaque] {atalho};
-        \node[rotulo, left=1mm of c1, anchor=east] {$F(x)$};
-      \end{tikzpicture}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Aprendizado multitarefa e autossupervisionado}
-  \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Multitarefa \cite{caruana1997multitask}}
-        \footnotesize
-        A rede aprende várias tarefas ao mesmo tempo e compartilha a
-        representação entre elas.\\[3pt]
-        Aqui: prever \textbf{atributos clínicos} disponíveis para quase todos
-        os pacientes (QRS, FEVE, ondas Q, Pro-BNP\ldots) como
-        \textbf{rótulos substitutos}.
-      \end{block}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Autossupervisionado \cite{chen2020simple}}
-        \footnotesize
-        A rede aprende sem rótulos, a partir do próprio sinal.\\[3pt]
-        \textbf{Contrastivo}: janelas do mesmo paciente devem ter
-        representações próximas; de pacientes diferentes, distantes.
-      \end{block}
-    \end{column}
-  \end{columns}
-
-  \vspace{0.5cm}
-  \centering
-  \begin{tikzpicture}[node distance=6mm]
-    \node[caixa] (s) {Sinal};
-    \node[caixa, right=of s] (r) {Representação\\aprendida};
-    \node[caixad, right=of r] (m) {Classificador simples\\(55 eventos)};
-    \draw[seta] (s) -- node[above, rotulo]{rede} (r);
-    \draw[seta] (r) -- (m);
-  \end{tikzpicture}
-
-  {\footnotesize Ideia comum: a rede aprende com muitos rótulos ou sem
-  rótulos; o desfecho raro entra só no fim.}
+% 7
+\begin{frame}{Objetivos}
+  \begin{block}{Objetivo geral}
+    \small Investigar métodos de aprendizado de máquina e de pré-processamento
+    do ECG para prever a MSC em pacientes com insuficiência cardíaca crônica,
+    a partir do Holter de 24 horas, em quatro anos de acompanhamento.
+  \end{block}
+  \begin{block}{Objetivos específicos}
+    \small
+    \begin{itemize}
+      \item[(i)] Comparar três cenários:
+        \begin{itemize}
+          \item[I.] aprendizado profundo sobre o sinal bruto;
+          \item[II.] pré-processamento, extração de características e
+            aprendizado de máquina clássico;
+          \item[III.] variáveis clínicas, isoladas e combinadas ao ECG.
+        \end{itemize}
+      \item[(ii)] Quantificar o ganho de combinar dados clínicos e do ECG.
+      \item[(iii)] Posicionar os resultados em relação à literatura.
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 % ==============================================================================
 \section{Trabalhos relacionados}
 % ==============================================================================
 
-\begin{frame}{Estudos com a coorte MUSIC e com o Holter}
-  \footnotesize
-  \scriptsize
-  \begin{tabular}{p{1.9cm}p{2.5cm}p{2.9cm}p{2.5cm}}
-    \toprule
-    \textbf{Trabalho} & \textbf{Coorte} & \textbf{Método} & \textbf{Resultado} \\
-    \midrule
-    Ramírez et al. \cite{ramirez2017sudden} &
-    MUSIC, ritmo sinusal; 597 pacientes, 49 mortes súbitas &
-    Marcadores de repolarização + clínicos; Cox &
-    AUC 0,73 na FEVE reduzida (sem validação separada) \\
-    \midrule
-    Swee et al. \cite{swee2026multimodal} &
-    MUSIC, todos os ritmos; 746 pacientes &
-    Marcadores de segmentos de 30\,s (derivação Y) + aprendizado de máquina &
-    AUC 0,682 $\pm$ 0,030 só com o ECG \\
-    \midrule
-    Kim et al. \cite{kim2025deep} &
-    Coreia; 1\,108 pacientes, 70 eventos &
-    Codificador pré-treinado + FEVE como rótulo substituto &
-    AUC 0,74; \textbf{0,60} na insuficiência cardíaca \\
-    \bottomrule
-  \end{tabular}
+% 8
+\begin{frame}{Marcadores do ECG e clínicos na coorte MUSIC}
+  \begin{block}{Ramírez et al. (2017) \cite{ramirez2017sudden}}
+    \small
+    \begin{itemize}
+      \item 597 pacientes em ritmo sinusal, 49 mortes súbitas.
+      \item Marcadores da repolarização e turbulência + clínicos, em modelo de Cox.
+      \item AUC de 0,73 na FEVE reduzida, \textbf{sem validação separada}.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Swee et al. (2026) \cite{swee2026multimodal}}
+    \small
+    \begin{itemize}
+      \item 746 pacientes, \textbf{sem restrição de ritmo}, derivação Y.
+      \item Marcadores de segmentos de 30 s; sequência processada por rede
+        convolucional temporal (múltiplas instâncias).
+      \item AUC de 0,682 $\pm$ 0,030 apenas com o ECG (média entre partições).
+    \end{itemize}
+  \end{block}
+\end{frame}
 
-  \vspace{0.4cm}
-  \normalsize
-  \alert{Lacuna:} comparar, na mesma coorte e no mesmo protocolo,
-  marcadores, redes treinadas no desfecho e representações aprendidas.
+% 9
+\begin{frame}{Aprendizado profundo no Holter e posicionamento}
+  \begin{block}{Kim et al. (2025) \cite{kim2025deep}}
+    \small
+    \begin{itemize}
+      \item 1\,108 pacientes (infarto ou insuficiência cardíaca), 70 eventos.
+      \item Codificador pré-treinado e congelado; só um classificador pequeno
+        é ajustado.
+      \item AUC de 0,74 na coorte completa, mas \textbf{0,60} no subgrupo com
+        insuficiência cardíaca.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Este trabalho}
+    \small
+    \begin{itemize}
+      \item Três abordagens no \textbf{mesmo protocolo} e nos mesmos pacientes.
+      \item Controle do otimismo: avaliação por paciente, seleção dentro da
+        partição, intervalos de confiança.
+      \item Restrição ao \textbf{ritmo sinusal}.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+% ==============================================================================
+\section{Fundamentação teórica}
+% ==============================================================================
+
+% 10
+\begin{frame}{Pré-processamento do ECG}
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+    \small
+    \begin{itemize}
+      \item \textbf{Interferências}: oscilação de linha de base ($<$ 0,5 Hz),
+        ruído muscular, rede elétrica (50 Hz).
+      \item \textbf{Filtro passa-faixa} Butterworth 0,5--40 Hz, aplicado nos
+        dois sentidos (fase nula).
+      \item \textbf{Normalização} da amplitude por derivação.
+      \item \textbf{Janelas}: o registro de 24 h é dividido em trechos;
+        janelas de um mesmo paciente \textbf{não são independentes}.
+    \end{itemize}
+    \column{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figuras/ecg_tres_derivacoes.png}
+    {\scriptsize\color{cinza} 10 s de Holter, derivações X, Y e Z, após o filtro.}
+  \end{columns}
+\end{frame}
+
+% 11
+\begin{frame}{Extração de características do ECG}
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \small
+    \begin{itemize}
+      \item \textbf{Detecção do QRS} e delineação das ondas (NeuroKit2
+        \cite{makowski2021neurokit2}).
+      \item \textbf{Intervalos RR e NN}: NN = entre batimentos normais.
+      \item \textbf{VFC}: SDNN, RMSSD, pNN50, potências LF e HF, Poincaré
+        (SD1, SD2), entropia amostral.
+      \item \textbf{Morfologia}: QRS, QT, QTc, ondas P e T.
+      \item \textbf{Ectopia}: extrassístoles, dupletes, pausas.
+    \end{itemize}
+    \column{0.46\textwidth}
+    \scriptsize
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{lcc}
+      \toprule
+      Medida & 5 min & 30 s \\
+      \midrule
+      Domínio do tempo & sim & sim \\
+      LF, HF, LF/HF & sim & não \\
+      Entropia amostral & sim & não \\
+      Morfologia & sim & sim \\
+      Contagens de ectopia & sim & sim \\
+      \bottomrule
+    \end{tabular}
+    \fonte{A duração do segmento limita quais medidas são confiáveis.}
+  \end{columns}
+\end{frame}
+
+% 12
+\begin{frame}{Redes convolucionais unidimensionais}
+  \small
+  \begin{itemize}
+    \item \textbf{Convolução 1D}: filtros que deslizam no tempo e detectam
+      padrões locais (núcleo de 75 ms $\approx$ um QRS).
+    \item Cada bloco: convolução $\rightarrow$ normalização em lote
+      $\rightarrow$ ReLU $\rightarrow$ agrupamento máximo $\rightarrow$ descarte.
+    \item \textbf{Agrupamento global} (média e máximo) e classificador.
+    \item Perda: entropia cruzada ponderada, $w_{+} = N_0/N_1 \approx 8{,}4$.
+  \end{itemize}
+  \vspace{0.1cm}
+  \centering
+  \resizebox{\linewidth}{!}{%
+  \begin{tikzpicture}[node distance=0.25cm,
+      b/.style={caixa, text width=1.55cm, minimum height=0.9cm}]
+    \node[b] (in) {Entrada\\$3 \times 24\,000$};
+    \node[b, right=of in, fill=boxcolor!40] (b1) {Bloco 1\\$16 \times 6\,000$};
+    \node[b, right=of b1, fill=boxcolor!40] (b2) {Bloco 2\\$32 \times 1\,500$};
+    \node[b, right=of b2, fill=boxcolor!40] (b3) {Bloco 3\\$64 \times 375$};
+    \node[b, right=of b3, fill=boxcolor!40] (b4) {Bloco 4\\$64 \times 93$};
+    \node[b, right=of b4, fill=destaque!15] (gp) {Agrup. global\\$128$};
+    \node[b, right=of gp, fill=verde!12] (cl) {Classif.\\prob. de MSC};
+    \foreach \a/\c in {in/b1,b1/b2,b2/b3,b3/b4,b4/gp,gp/cl} \draw[seta] (\a) -- (\c);
+  \end{tikzpicture}}
+\end{frame}
+
+% 13
+\begin{frame}{Redes residuais}
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+    \small
+    \begin{itemize}
+      \item Problema: redes muito profundas ficam difíceis de treinar.
+      \item \textbf{Aprendizado residual} \cite{he2016deep}: o bloco aprende
+        só a diferença $\mathcal{F}(\mathbf{x})$ e soma a entrada:
+        \[ \mathbf{y} = \mathrm{ReLU}\big(\mathcal{F}(\mathbf{x}) + \mathbf{x}\big) \]
+      \item Atalho: identidade, ou projeção $1\times1$ quando muda a dimensão.
+      \item A cada estágio: comprimento $\div 2$, canais $\times 2$.
+    \end{itemize}
+    \column{0.46\textwidth}
+    \centering
+    \begin{tikzpicture}[node distance=0.12cm,
+        cv/.style={draw, rounded corners=1pt, fill=boxcolor!45, minimum width=3cm, font=\scriptsize},
+        bn/.style={draw, rounded corners=1pt, fill=verde!10, minimum width=3cm, font=\scriptsize}]
+      \node (x) {$\mathbf{x}$};
+      \node[cv, below=0.3cm of x] (c1) {Convolução, núcleo 3};
+      \node[bn, below=of c1] (n1) {Normalização + ReLU};
+      \node[cv, below=0.2cm of n1] (c2) {Convolução, núcleo 3};
+      \node[bn, below=of c2] (n2) {Normalização};
+      \node[draw, circle, inner sep=1pt, below=0.3cm of n2] (s) {$+$};
+      \node[below=0.25cm of s] (y) {$\mathbf{y}$ (após ReLU)};
+      \draw[seta] (x) -- (c1); \draw[seta] (n1) -- (c2);
+      \draw[seta] (n2) -- (s); \draw[seta] (s) -- (y);
+      \draw[seta, destaque] ([yshift=-0.1cm]x.south) -- ++(1.9,0) |- (s.east)
+        node[pos=0.25, right, font=\scriptsize, text=destaque] {atalho};
+    \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+% 14
+\begin{frame}{Mecanismo de atenção}
+  \small
+  \begin{itemize}
+    \item Convoluções relacionam apenas instantes \textbf{vizinhos}; ao final
+      da ResNet-18, o campo receptivo é de cerca de 2,2 s.
+    \item A \textbf{autoatenção} \cite{vaswani2017attention} relaciona cada
+      posição com todas as outras em uma única operação:
+      \[ \text{Atenção}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d}}\right) V \]
+    \item Neste trabalho: ResNet-18 reduzida como extrator, seguida de
+      \textbf{uma camada codificadora} \textit{Transformer} (4 cabeças).
+    \item Custo cresce com o quadrado do comprimento da sequência.
+  \end{itemize}
+\end{frame}
+
+% 15
+\begin{frame}{Modelos de aprendizado de máquina clássico}
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \begin{block}{Regressão logística regularizada}
+      \footnotesize
+      \textbf{L2}: reduz os coeficientes sem zerá-los.\\
+      \textbf{L1}: zera coeficientes e seleciona variáveis.
+    \end{block}
+    \begin{block}{Análise de componentes principais}
+      \footnotesize Substitui marcadores correlacionados por poucas
+      combinações não correlacionadas, sem usar o desfecho.
+    \end{block}
+    \column{0.49\textwidth}
+    \begin{block}{Floresta aleatória \cite{breiman2001random}}
+      \footnotesize Conjunto de árvores de decisão; captura relações não
+      lineares e interações entre marcadores.
+    \end{block}
+    \begin{block}{Por que modelos simples?}
+      \footnotesize 55 eventos: a regra de dez eventos por variável limita
+      o modelo a poucas variáveis.
+    \end{block}
+  \end{columns}
+\end{frame}
+
+% 16
+\begin{frame}{Avaliação de classificadores}
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \small
+    \begin{itemize}
+      \item \textbf{AUC}: probabilidade de o modelo dar risco maior a um caso
+        do que a um controle. 0,5 = acaso; 1 = perfeito.
+      \item \textbf{AUPRC}: área sob a curva precisão--revocação; acaso =
+        prevalência (0,106) \cite{davis2006relationship}.
+      \item \textbf{Agregação por paciente}: média das probabilidades das
+        janelas.
+      \item \textbf{Intervalo de confiança} por \textit{bootstrap} de
+        pacientes.
+    \end{itemize}
+    \column{0.46\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.85]
+      \draw[->] (0,0) -- (3.3,0) node[below left, font=\tiny] {1 $-$ especificidade};
+      \draw[->] (0,0) -- (0,3.3) node[above right, font=\tiny] {sensibilidade};
+      \draw[dashed, cinza] (0,0) -- (3,3);
+      \fill[destaque!20] (0,0) .. controls (0.3,2.0) and (1.2,2.8) .. (3,3) -- (3,0) -- cycle;
+      \draw[destaque, very thick] (0,0) .. controls (0.3,2.0) and (1.2,2.8) .. (3,3);
+      \node[font=\scriptsize] at (2.0,1.0) {AUC};
+      \node[font=\tiny, cinza, rotate=45] at (1.9,2.15) {acaso};
+    \end{tikzpicture}
+  \end{columns}
 \end{frame}
 
 % ==============================================================================
 \section{Metodologia}
 % ==============================================================================
 
-\begin{frame}{A coorte MUSIC e o pré-processamento}
-  \begin{columns}[c]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \begin{tikzpicture}[node distance=3.5mm, every node/.style={font=\footnotesize}]
-        \node[caixa, minimum width=4.4cm] (a) {Base MUSIC: 992 pacientes
-          \cite{martinyebra2024music}};
-        \node[caixa, minimum width=4.4cm, below=of a] (b) {Ritmo sinusal: 710};
-        \node[caixa, minimum width=4.4cm, below=of b] (c) {Morte súbita ou vivo\\
-          com 4 anos de seguimento: 587};
-        \node[caixad, minimum width=4.4cm, below=of c] (d) {Holter com X, Y e Z:
-          \textbf{517}\\55 casos (10,6\,\%)};
-        \draw[seta] (a) -- (b);
-        \draw[seta] (b) -- (c);
-        \draw[seta] (c) -- (d);
-      \end{tikzpicture}
-    \end{column}
-    \begin{column}{0.46\textwidth}
-      \textbf{Pré-processamento}
-      \begin{itemize}
-        \item Filtro passa-faixa de 0,5 a 40\,Hz
-        \item Descarte da 1.ª e da última hora
-        \item Janelas de 30\,s espalhadas pelo registro
-        \item Correção dos intervalos RR e controle de qualidade por
-              derivação
-      \end{itemize}
-    \end{column}
-  \end{columns}
-  \fonte{Dados públicos no PhysioNet \cite{martinyebra2025music}.}
-\end{frame}
-
-\begin{frame}{Abordagem 1: biomarcadores e regressão logística}
-  \centering
-  \begin{tikzpicture}[node distance=5mm]
-    \node[caixa] (h) {Holter\\24\,h};
-    \node[caixa, right=of h] (s) {Segmentos de 30\,s\\a cada 2 min};
-    \node[caixa, right=of s] (m) {Marcadores\\(NeuroKit2)};
-    \node[caixa, right=of m] (p) {Resumo por\\paciente};
-    \node[caixad, right=of p] (l) {Regressão\\logística};
-    \draw[seta] (h) -- (s);
-    \draw[seta] (s) -- (m);
-    \draw[seta] (m) -- (p);
-    \draw[seta] (p) -- (l);
-  \end{tikzpicture}
-
-  \vspace{0.5cm}
-  \raggedright
+% 17
+\begin{frame}{Base de dados MUSIC}
   \begin{itemize}
-    \item Segmentos com menos de 80\,\% de batimentos normais são descartados
-    \item Por segmento, usa-se a derivação mais limpa
-    \item \textbf{Modelo pré-especificado}: dois marcadores escolhidos pela
-          literatura, e não pelos dados
-          \begin{itemize}
-            \item variação da frequência cardíaca ao longo do dia
-            \item carga de ectopia
-          \end{itemize}
-    \item Dois protocolos de extração: \textbf{A}, segmentos de 5 min com
-          44 marcadores; \textbf{B}, segmentos de 30\,s
-    \item Escolher os marcadores olhando o desfecho de toda a coorte
-          superestima o desempenho \cite{kapoor2023leakage}
+    \item Pública no PhysioNet \cite{martinyebra2025music, martinyebra2024music}.
+    \item \textbf{992 pacientes} com insuficiência cardíaca crônica (NYHA II e
+      III), recrutados em 2003--2004 em oito hospitais da Espanha.
+    \item Acompanhamento mediano de 44 meses.
+    \item \textbf{Holter de 24 h} em 936 pacientes: derivações X, Y e Z, 200 Hz.
+    \item Causas de óbito \textbf{adjudicadas}: separam a MSC da falência de bomba.
+    \item Variáveis clínicas e exames na entrada do estudo.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Abordagem 2: redes treinadas direto no desfecho}
-  \begin{columns}[c]
-    \begin{column}{0.44\textwidth}
-      \centering
-      \begin{tikzpicture}[node distance=3mm]
-        \node[caixa, minimum width=3.4cm] (e) {Janela do sinal\\(3 derivações)};
-        \node[caixa, minimum width=3.4cm, below=of e] (c) {Camadas convolucionais\\ou blocos residuais};
-        \node[caixa, minimum width=3.4cm, below=of c] (g) {\textit{Pooling} global};
-        \node[caixad, minimum width=3.4cm, below=of g] (o) {Probabilidade de\\morte súbita};
-        \node[caixa, minimum width=3.4cm, below=of o] (p) {Média das janelas\\por paciente};
-        \draw[seta] (e) -- (c);
-        \draw[seta] (c) -- (g);
-        \draw[seta] (g) -- (o);
-        \draw[seta] (o) -- (p);
-      \end{tikzpicture}
-    \end{column}
-    \begin{column}{0.52\textwidth}
-      \textbf{Configurações avaliadas (19)}
-      \begin{itemize}
-        \item CNNs de três capacidades (14 mil a 418 mil parâmetros)
-        \item ResNet-18, ResNet-34 e ResNet-50
-        \item ResNet-18 + \textit{Transformer}
-        \item Fusão com as variáveis clínicas
-        \item Janelas de 5\,s a 2 min
-        \item Busca de hiperparâmetros
-      \end{itemize}
-      \vspace{0.2cm}
-      {\footnotesize O único rótulo é o desfecho: 33 casos de treino por
-      partição.}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Arquitetura da CNN}
+% 18
+\begin{frame}{População de estudo e critérios de seleção}
   \centering
-  \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{figuras/arquitetura_cnn.jpg}
-  \fonte{Quatro blocos convolucionais, \textit{pooling} global (média e máximo) e
-  cabeça de classificação. A capacidade varia com o número de canais.}
-\end{frame}
-
-\begin{frame}{Arquitetura da ResNet-18}
-  \centering
-  \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{figuras/arquitetura_resnet.jpg}
-  \fonte{Quatro estágios de dois blocos básicos; a ResNet-50 usa o bloco de
-  gargalo (à direita).}
-\end{frame}
-
-\begin{frame}{Abordagem 3: representações aprendidas}
-  \centering
-  \resizebox{\linewidth}{!}{%
-  \begin{tikzpicture}[node distance=4mm and 6mm]
-    \node[caixa] (s) {Janelas de 30\,s\\(100 por paciente)};
-    \node[caixa, right=of s] (r) {ResNet-18 1D\\2,3 milhões de parâmetros};
-    \node[caixa, above right=1mm and 6mm of r] (t) {Etapa 1: prever 45\\atributos clínicos};
-    \node[caixa, below right=1mm and 6mm of r] (c) {ou: contrastivo,\\sem rótulos};
-    \node[caixa, right=24mm of r] (e) {Representação\\média do paciente};
-    \node[caixad, right=of e] (l) {Etapa 2: PCA +\\logística};
-    \draw[seta] (s) -- (r);
-    \draw[seta] (r) -- (t);
-    \draw[seta] (r) -- (c);
-    \draw[seta] (t) -- (e);
-    \draw[seta] (c) -- (e);
-    \draw[seta] (e) -- (l);
+  \resizebox{0.95\linewidth}{!}{%
+  \begin{tikzpicture}[x=1cm, y=1cm,
+      etapa/.style={caixa, text width=4.2cm, minimum height=0.8cm},
+      exclui/.style={draw=red!50, fill=red!5, rounded corners=2pt, align=left,
+        text width=6.4cm, font=\footnotesize, inner sep=3pt},
+      final/.style={caixav, text width=4.2cm, minimum height=0.8cm, line width=0.8pt}]
+    \node[etapa] (n0) at (0, 0)    {Base MUSIC: \textbf{992}};
+    \node[etapa] (n1) at (0, -1.6) {Ritmo sinusal: \textbf{710}};
+    \node[etapa] (n2) at (0, -3.2) {MSC ou vivo: \textbf{608}};
+    \node[etapa] (n3) at (0, -4.8) {Casos + controles: \textbf{587}};
+    \node[final] (n4) at (0, -6.4) {\textbf{517 pacientes}\\55 casos e 462 controles};
+    \foreach \a/\b in {n0/n1, n1/n2, n2/n3, n3/n4} \draw[seta] (\a) -- (\b);
+    \node[exclui] (e1) at (6.2, -0.8) {\textbf{Critério 1} (282): ritmo não sinusal};
+    \node[exclui] (e2) at (6.2, -2.4) {\textbf{Critério 2} (102): óbito não cardíaco ou por falência de bomba};
+    \node[exclui] (e3) at (6.2, -4.0) {\textbf{Critério 3} (21): vivos com seguimento $<$ 4 anos};
+    \node[exclui] (e4) at (6.2, -5.6) {\textbf{Sinal} (70): sem Holter ou sem as três derivações};
+    \foreach \y/\e in {-0.8/e1, -2.4/e2, -4.0/e3, -5.6/e4} \draw[seta] (0,\y) -- (\e.west);
   \end{tikzpicture}}
-
-  \vspace{0.5cm}
-  \raggedright
-  \begin{itemize}
-    \item Rótulos substitutos: ECG de repouso, ecocardiograma, laboratório e
-          Holter (QRS, FEVE, ondas Q, Pro-BNP\ldots)
-    \item 381 pacientes fora da coorte também entram na etapa 1: eles têm os
-          atributos, mesmo sem o desfecho
-    \item O desfecho só é usado na etapa 2, com um modelo de poucos parâmetros
-    \item Os atributos servem só no treino: na inferência, \textbf{basta o
-          Holter}
-  \end{itemize}
+  \fonte{Classificação binária por paciente: MSC (casos) contra sobreviventes em 4 anos (controles). Prevalência de 10,6\,\%.}
 \end{frame}
 
-\begin{frame}{Protocolo de avaliação}
+% 19
+\begin{frame}{Variáveis clínicas e exames}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \begin{block}{Seis variáveis clínicas}
+      \small
+      \begin{itemize}
+        \item Idade (anos)
+        \item Classe funcional NYHA (ordinal)
+        \item Gênero
+        \item Ondas Q de necrose
+        \item Taquicardia ventricular não sustentada
+        \item Taquiarritmia supraventricular paroxística
+      \end{itemize}
+    \end{block}
+    \column{0.5\textwidth}
+    \begin{block}{Exames do estudo}
+      \small
+      \begin{itemize}
+        \item \textbf{Ecocardiograma}: FEVE, diâmetros, contratilidade do VD.
+        \item \textbf{Laudo do ECG de repouso}: PR, QT, QRS.
+        \item \textbf{Medidas do Holter} tabuladas: extrassístoles, SDNN, RMSSD.
+        \item \textbf{Pro-BNP}.
+      \end{itemize}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+% 20
+\begin{frame}{Pré-processamento do sinal}
   \centering
-  \begin{tikzpicture}[x=0.85cm, y=0.5cm]
-    \foreach \k in {1,...,5} {
-      \foreach \j in {1,...,5} {
-        \ifnum\j=\k
-          \fill[destaque!70] (\j,-\k) rectangle ++(0.95,0.8);
-        \else
-          \fill[azulesc!25] (\j,-\k) rectangle ++(0.95,0.8);
-        \fi
-      }
-      \node[font=\scriptsize, anchor=east] at (0.9,-\k+0.4) {Rodada \k};
-    }
-    \fill[azulesc!25] (7,-2) rectangle ++(0.5,0.8);
-    \node[font=\scriptsize, anchor=west] at (7.6,-1.6) {treino e validação interna};
-    \fill[destaque!70] (7,-3.5) rectangle ++(0.5,0.8);
-    \node[font=\scriptsize, anchor=west] at (7.6,-3.1) {teste (103 pacientes, 11 casos)};
+  \begin{tikzpicture}[node distance=0.45cm]
+    \node[caixa, text width=2.6cm] (r) {Registro de 24 h\\X, Y, Z a 200 Hz};
+    \node[caixa, text width=2.6cm, right=of r] (m) {Descarte de 5 min\\no início e no fim};
+    \node[caixa, text width=2.6cm, right=of m] (j) {Janelas de 2 min\\(24\,000 amostras)};
+    \node[caixa, text width=2.6cm, below=0.6cm of j] (f) {Butterworth\\0,5--40 Hz, fase nula};
+    \node[caixa, text width=2.6cm, left=of f] (n) {Normalização\\por derivação};
+    \node[caixad, text width=2.6cm, left=of n] (red) {Entrada da rede};
+    \draw[seta] (r) -- (m); \draw[seta] (m) -- (j); \draw[seta] (j) -- (f);
+    \draw[seta] (f) -- (n); \draw[seta] (n) -- (red);
   \end{tikzpicture}
+  \vspace{0.4cm}
+  \begin{itemize}
+    \small
+    \item Treinamento: 250 a 350 janelas por paciente, com posição sorteada.
+    \item Avaliação: 100 a 200 janelas em grade regular (reprodutível).
+    \item A escala da normalização é calculada só com o treinamento.
+  \end{itemize}
+\end{frame}
 
+% 21
+\begin{frame}{Cenário I: arquiteturas avaliadas}
+  \centering
+  \footnotesize
+  \begin{tabular}{llrl}
+    \toprule
+    Família & Variante & Parâmetros & Janela \\
+    \midrule
+    Convolucional & mínima (3 blocos) & 14\,425 & 2 min e 10 s \\
+                  & simples (4 blocos) & 109\,361 & 2 min e 10 s \\
+                  & média (4 blocos) & 418\,145 & 2 min e 10 s \\
+    \midrule
+    Residual & ResNet-18 mínima & 78\,169 & 5,12 s \\
+             & ResNet-18 reduzida & 1\,029\,985 & 2 min \\
+             & ResNet-18 & 3\,976\,385 & 2 min e 5,12 s \\
+             & ResNet-34 & 7\,350\,721 & 2 min \\
+             & ResNet-50 & 16\,479\,937 & 2 min \\
+    \midrule
+    Atenção & ResNet-18 + \textit{Transformer} & 1\,491\,553 & 2 min \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Capacidade variando em mais de mil vezes: se o desempenho não acompanhar, a limitação está nos dados, e não na rede.}
+\end{frame}
+
+% 22
+\begin{frame}{Cenário I: treinamento das redes}
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \small
+    \begin{itemize}
+      \item Otimizador \textbf{AdamW}, taxa $10^{-4}$ com decaimento cosseno
+        \cite{loshchilov2017sgdr}.
+      \item \textbf{Desbalanceamento}: perda ponderada, $w_{+} \approx 8{,}4$.
+      \item \textbf{Seleção da época}: média móvel da AUC de validação nas
+        três últimas épocas.
+      \item \textbf{Limiar}: índice de Youden na validação interna.
+      \item \textbf{Busca de hiperparâmetros}: Optuna, 25 tentativas por família.
+    \end{itemize}
+    \column{0.46\textwidth}
+    \centering
+    \begin{tikzpicture}[node distance=0.3cm]
+      \node[caixa, text width=3.6cm] (t) {Treino (75\,\%)\\ajusta os pesos};
+      \node[caixa, text width=3.6cm, below=of t] (v) {Validação interna (25\,\%)\\época e limiar};
+      \node[caixad, text width=3.6cm, below=of v] (te) {Teste\\nunca usado em escolhas};
+      \draw[seta] (t) -- (v); \draw[seta] (v) -- (te);
+    \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+% 23
+\begin{frame}{Cenário II: protocolos de extração dos marcadores}
+  \centering
+  \footnotesize
+  \begin{tabular}{lll}
+    \toprule
+    & Protocolo A & Protocolo B \\
+    \midrule
+    Segmento & 5 minutos & 30 segundos \\
+    Espaçamento & um por hora & um a cada 2 minutos \\
+    Segmentos por paciente & cerca de 21 & cerca de 636 \\
+    Derivação & a de maior desvio-padrão & Y \\
+    Domínio da frequência & sim & não \\
+    Ectopia & proporção de RR irregulares & contagens completas \\
+    Variáveis por paciente & 44 & 32 a 122 \\
+    \bottomrule
+  \end{tabular}
   \vspace{0.3cm}
-  \raggedright
   \begin{itemize}
-    \item Validação cruzada em 5 partições, estratificada \textbf{por paciente}
-    \item Padronização, escala do sinal e PCA ajustadas só no treino
-    \item Métrica principal: \textbf{AUC} das predições fora da partição dos
-          517 pacientes, com IC 95\,\% por \textit{bootstrap}
-    \item Sensibilidade e especificidade com limiar de Youden escolhido no
-          treino
+    \small
+    \item Cada marcador é calculado em cada segmento e \textbf{resumido por
+      paciente} (média e desvio-padrão, ou mediana e percentis).
+    \item Modelos: logística L1 e L2, PCA (4) + logística, floresta aleatória.
   \end{itemize}
+\end{frame}
+
+% 24
+\begin{frame}{Cenário III: variáveis clínicas e combinação com o ECG}
+  \centering
+  \begin{tikzpicture}[node distance=0.5cm]
+    \node[caixa, text width=3cm] (c) {Variáveis clínicas\\e exames};
+    \node[caixa, text width=3cm, below left=0.7cm and 0.3cm of c] (m) {+ marcadores\\do ECG (Cenário II)};
+    \node[caixa, text width=3cm, below right=0.7cm and 0.3cm of c] (s) {+ sinal bruto\\(rede do Cenário I)};
+    \node[caixav, text width=3cm, below=0.6cm of m] (lm) {Regressão logística\\com as duas fontes};
+    \node[caixad, text width=3cm, below=0.6cm of s] (rc) {Rede com concatenação\\ResNet-18 + ramo clínico};
+    \draw[seta] (c) -- (m); \draw[seta] (c) -- (s);
+    \draw[seta] (m) -- (lm); \draw[seta] (s) -- (rc);
+  \end{tikzpicture}
+  \vspace{0.2cm}
+  \begin{itemize}
+    \small
+    \item Referência: logística L2 sobre as seis variáveis clínicas.
+    \item Rede com concatenação: treino conjunto, taxa reduzida no extrator
+      ou extrator congelado.
+  \end{itemize}
+\end{frame}
+
+% 25
+\begin{frame}{Protocolo de avaliação}
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+    \small
+    \begin{itemize}
+      \item Validação cruzada \textbf{estratificada em 5 partições}, dividida
+        por paciente.
+      \item Cada paciente cai no teste \textbf{uma única vez}.
+      \item \textbf{AUC geral}: uma AUC sobre as predições dos 517
+        pacientes (medida principal).
+      \item \textbf{AUC por partição}: média $\pm$ desvio-padrão das cinco
+        AUC de teste.
+      \item Comparações pareadas por \textit{bootstrap}.
+    \end{itemize}
+    \column{0.48\textwidth}
+    \centering
+    \footnotesize
+    \begin{tabular}{ccc}
+      \toprule
+      Rodada & Teste & Treino \\
+      \midrule
+      1 & 104 (11) & 413 (44) \\
+      2 & 104 (11) & 413 (44) \\
+      3 & 103 (11) & 414 (44) \\
+      4 & 103 (11) & 414 (44) \\
+      5 & 103 (11) & 414 (44) \\
+      \midrule
+      Total & 517 (55) & --- \\
+      \bottomrule
+    \end{tabular}
+    \fonte{Pacientes (casos).}
+  \end{columns}
 \end{frame}
 
 % ==============================================================================
-\section{Resultados preliminares}
+\section{Resultados}
 % ==============================================================================
 
-\begin{frame}{Biomarcadores: modelos do protocolo A}
-  \centering
-  \footnotesize
-  \begin{tabular}{lrcc}
-    \toprule
-    Modelo & Variáveis & AUC [IC 95\,\%] & AP \\
-    \midrule
-    Clínicas (referência)           & 6  & 0,661 [0,577--0,741] & 0,233 \\
-    \midrule
-    Marcadores, logística L2        & 44 & 0,589 [0,507--0,671] & 0,180 \\
-    Marcadores, logística L1        & 44 & 0,585 [0,503--0,666] & 0,163 \\
-    Marcadores, PCA (4) + logística & 44 & \auc{0,624} [0,535--0,708] & 0,232 \\
-    Marcadores, floresta aleatória  & 44 & 0,621 [0,537--0,701] & 0,184 \\
-    \midrule
-    Clínicas + marcadores, L2       & 50 & 0,672 [0,597--0,745] & 0,201 \\
-    Clínicas + marcadores, L1       & 50 & \auc{0,681} [0,604--0,756] & 0,191 \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.4cm}
-  \raggedright
-  \small
-  \begin{itemize}
-    \item Sozinhos, os marcadores ficam abaixo das seis variáveis clínicas
-    \item Somados a elas, o ganho ($+0{,}020$ [$-0{,}047$; $+0{,}095$]) não
-          é distinguível de zero
-  \end{itemize}
-  \fonte{AP de referência (acaso) = prevalência = 0,106.}
-\end{frame}
-
-\begin{frame}{Biomarcadores: o otimismo da seleção}
-  \centering
-  \footnotesize
-  \begin{tabular}{llcc}
-    \toprule
-    Seleção & Modelo & AUC [IC 95\,\%] & $\Delta$ sobre clínicas \\
-    \midrule
-    Coorte inteira     & 4 marcadores            & 0,627 [0,541--0,710] & --- \\
-    Coorte inteira     & 2 marcadores            & 0,647 [0,559--0,727] & --- \\
-    Coorte inteira     & clínicas + 4 marcadores & 0,684 [0,601--0,762] & $+0{,}023$ \\
-    \midrule
-    Dentro da partição & 4 marcadores            & \alert{0,580} [0,497--0,660] & --- \\
-    Dentro da partição & clínicas + 4 marcadores & \alert{0,640} [0,553--0,726] & $-0{,}021$ \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.4cm}
-  \raggedright
-  \small
-  \begin{itemize}
-    \item Escolher os marcadores olhando o desfecho de \textbf{todos} os
-          pacientes eleva a AUC em cerca de 0,05
-    \item Refeita a seleção só no treino de cada partição, o intervalo inclui
-          o acaso
-    \item Por isso, o modelo final usa marcadores \textbf{pré-especificados}
-          pela literatura
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Redes convolucionais: capacidade e janela}
+% 26
+\begin{frame}{Cenário I: redes convolucionais}
   \centering
   \footnotesize
   \begin{tabular}{llrcc}
     \toprule
-    Rede & Janela & Parâmetros & AUC partições & AUC fora da partição [IC 95\,\%] \\
+    Rede & Janela & Parâmetros & AUC por partição & AUC geral [IC 95\,\%] \\
     \midrule
-    Mínima  & 2 min & 14\,425  & 0,543 $\pm$ 0,059 & 0,523 [0,440--0,612] \\
+    Mínima & 2 min & 14\,425 & 0,543 $\pm$ 0,059 & 0,523 [0,440--0,612] \\
     Simples & 2 min & 109\,361 & 0,500 $\pm$ 0,067 & 0,486 [0,402--0,578] \\
-    Média   & 2 min & 418\,145 & 0,494 $\pm$ 0,119 & 0,485 [0,400--0,574] \\
+    Média & 2 min & 418\,145 & 0,494 $\pm$ 0,119 & 0,485 [0,400--0,574] \\
     \midrule
-    Mínima  & 10 s  & 14\,425  & 0,589 $\pm$ 0,090 & \auc{0,554} [0,467--0,634] \\
-    Simples & 10 s  & 109\,361 & 0,509 $\pm$ 0,051 & 0,491 [0,411--0,578] \\
-    Média   & 10 s  & 418\,145 & 0,495 $\pm$ 0,118 & 0,485 [0,406--0,569] \\
+    \textbf{Mínima} & \textbf{10 s} & 14\,425 & 0,589 $\pm$ 0,090 & \textbf{0,554} [0,467--0,634] \\
+    Simples & 10 s & 109\,361 & 0,509 $\pm$ 0,051 & 0,491 [0,411--0,578] \\
+    Média & 10 s & 418\,145 & 0,495 $\pm$ 0,118 & 0,485 [0,406--0,569] \\
     \bottomrule
   \end{tabular}
-
-  \vspace{0.4cm}
-  \raggedright
-  \small
-  \begin{itemize}
-    \item Todos os intervalos incluem 0,5: nenhuma rede se distingue do acaso
-    \item A rede menor obteve os maiores valores; mais capacidade não ajudou
-  \end{itemize}
+  \msg{Nenhuma configuração se distinguiu do acaso; a rede menor obteve os
+    maiores valores.}
 \end{frame}
 
-\begin{frame}{Redes residuais: largura e profundidade}
+% 27
+\begin{frame}{Cenário I: redes residuais}
   \centering
-  \footnotesize
-  \begin{tabular}{llrc}
-    \toprule
-    Rede & Janela & Parâmetros & AUC fora da partição [IC 95\,\%] \\
-    \midrule
-    ResNet-18 mínima   & 5,12 s & 78\,169      & \auc{0,562} [0,475--0,642] \\
-    ResNet-18 reduzida & 2 min  & 1\,029\,985  & 0,504 [0,420--0,588] \\
-    ResNet-18 completa & 2 min  & 3\,976\,385  & 0,508 [0,431--0,588] \\
-    ResNet-18 completa & 5,12 s & 3\,976\,385  & 0,492 [0,411--0,577] \\
-    \midrule
-    ResNet-34          & 2 min  & 7\,350\,721  & 0,514 [0,429--0,601] \\
-    ResNet-50          & 2 min  & 16\,479\,937 & 0,536 [0,448--0,618] \\
-    ResNet-18 + \textit{Transformer} & 2 min & --- & 0,493 \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.4cm}
-  \raggedright
-  \small
-  \begin{itemize}
-    \item Quadruplicar os parâmetros (ResNet-18 $\to$ ResNet-50) não mudou o
-          desempenho
-    \item A ResNet-50 tem mais de 53 mil parâmetros por paciente de treino e
-          memoriza o treino nas primeiras épocas
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Redes: busca de hiperparâmetros e fusão com clínicas}
-  \centering
-  \footnotesize
-  \begin{tabular}{llc}
-    \toprule
-    Modelo & Janela & AUC fora da partição [IC 95\,\%] \\
-    \midrule
-    \multicolumn{3}{l}{\textit{Busca bayesiana (Optuna, 25 tentativas por família)}} \\
-    Convolucional & 1 min & 0,556 [0,464--0,647] \\
-    Residual      & 1 min & 0,496 [0,411--0,584] \\
-    \midrule
-    \multicolumn{3}{l}{\textit{Fusão da ResNet-18 com as seis variáveis clínicas}} \\
-    Treinamento conjunto      & 2 min & 0,516 [0,433--0,603] \\
-    Taxa reduzida no extrator & 2 min & \auc{0,579} [0,492--0,669] \\
-    Extrator congelado        & 2 min & 0,577 [0,491--0,659] \\
-    \midrule
-    Só as variáveis clínicas (logística) & --- & \auc{0,661} [0,577--0,741] \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.3cm}
-  \raggedright
-  \small
-  \begin{itemize}
-    \item A busca não superou as configurações manuais
-    \item Na fusão, o desempenho vem das clínicas; treinar o sinal piora
-    \item Sem a restrição ao ritmo sinusal (703 pacientes), a ResNet-18 chega
-          a 0,575 [0,511--0,642]: aprende a fibrilação atrial, não a morte
-          súbita
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Redes: métricas com limiar de Youden}
-  \centering
-  \tiny
-  \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{llcccccc}
-    \toprule
-    Rede & Janela & AUC & AP & Sens. & Espec. & VPP & VPN \\
-    \midrule
-    CNN mínima & 2 min & 0,523 & 0,139 & 0,582 & 0,448 & 0,111 & 0,900 \\
-    CNN simples & 2 min & 0,486 & 0,121 & 0,364 & 0,645 & 0,109 & 0,895 \\
-    CNN média & 2 min & 0,485 & 0,126 & 0,309 & 0,688 & 0,106 & 0,893 \\
-    CNN mínima & 10 s & 0,554 & 0,132 & 0,691 & 0,346 & 0,112 & 0,904 \\
-    CNN simples & 10 s & 0,491 & 0,119 & 0,400 & 0,530 & 0,092 & 0,881 \\
-    CNN média & 10 s & 0,485 & 0,110 & 0,455 & 0,485 & 0,095 & 0,882 \\
-    \midrule
-    ResNet-18 mínima & 5,12 s & 0,562 & 0,160 & 0,455 & 0,654 & 0,135 & 0,910 \\
-    ResNet-18 reduzida & 2 min & 0,504 & 0,117 & 0,582 & 0,437 & 0,110 & 0,898 \\
-    ResNet-18 completa & 2 min & 0,508 & 0,121 & 0,455 & 0,461 & 0,091 & 0,877 \\
-    ResNet-18 completa & 5,12 s & 0,492 & 0,129 & 0,582 & 0,442 & 0,110 & 0,899 \\
-    ResNet-34 & 2 min & 0,514 & 0,122 & 0,509 & 0,517 & 0,112 & 0,898 \\
-    ResNet-50 & 2 min & 0,536 & 0,137 & 0,455 & 0,511 & 0,100 & 0,887 \\
-    ResNet-18 + Transformer & 2 min & 0,493 & 0,134 & 0,291 & 0,703 & 0,105 & 0,893 \\
-    \midrule
-    Convolucional, busca & 1 min & 0,556 & 0,189 & 0,509 & 0,552 & 0,119 & 0,904 \\
-    Residual, busca & 1 min & 0,496 & 0,122 & 0,455 & 0,565 & 0,111 & 0,897 \\
-    \midrule
-    Fusão, treino conjunto & 2 min & 0,516 & 0,141 & 0,418 & 0,548 & 0,099 & 0,888 \\
-    Fusão, taxa reduzida & 2 min & 0,579 & 0,180 & 0,455 & 0,673 & 0,142 & 0,912 \\
-    Fusão, extrator congelado & 2 min & 0,577 & 0,146 & 0,727 & 0,424 & 0,131 & 0,929 \\
-    Fusão, treino conjunto & 10 s & 0,491 & 0,113 & 0,400 & 0,569 & 0,100 & 0,889 \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.2cm}
-  \raggedright
   \scriptsize
-  Sob classificação aleatória, AP e VPP $\approx$ prevalência (0,106) e
-  VPN $\approx$ 0,894: as redes ficam praticamente nesse nível.
-\end{frame}
-
-\begin{frame}{Representações: rede multitarefa e contrastivo}
-  \centering
-  \footnotesize
-  \begin{tabular}{lccc}
+  \begin{tabular}{llrcc}
     \toprule
-    Modelo & AUC [IC 95\,\%] & Sens. & Espec. \\
+    Rede & Janela & Parâmetros & AUC por partição & AUC geral [IC 95\,\%] \\
     \midrule
-    Seis variáveis clínicas          & 0,661 [0,580--0,743] & 0,58 & 0,67 \\
-    \midrule
-    \rowcolor{destaque!12}
-    Rede multitarefa (só Holter)     & \auc{0,682} [0,600--0,763] & 0,51 & 0,80 \\
-    Rede multitarefa + clínicas      & \auc{0,702} [0,621--0,780] & 0,55 & 0,74 \\
-    Valores previstos + clínicas     & 0,646 [0,557--0,726] & 0,49 & 0,72 \\
-    Contrastivo                      & 0,590 [0,501--0,677] & 0,64 & 0,45 \\
-    Contrastivo + clínicas           & 0,634 [0,551--0,727] & 0,64 & 0,57 \\
-    \midrule
-    Clínicas + FEVE + Pro-BNP        & 0,705 [0,617--0,780] & 0,64 & 0,68 \\
-    Clínicas + ecocardiograma        & 0,720 [0,640--0,789] & 0,65 & 0,64 \\
-    Clínicas + todos os exames       & 0,733 [0,656--0,804] & 0,71 & 0,64 \\
-    Clínicas + todos os exames + rede & 0,728 [0,652--0,798] & 0,73 & 0,64 \\
+    \textbf{ResNet-18 mínima} & 5,12 s & 78\,169 & 0,569 $\pm$ 0,067 & \textbf{0,562} [0,475--0,642] \\
+    ResNet-18 reduzida & 2 min & 1\,029\,985 & 0,516 $\pm$ 0,102 & 0,504 [0,420--0,588] \\
+    ResNet-18 & 2 min & 3\,976\,385 & 0,528 $\pm$ 0,088 & 0,508 [0,431--0,588] \\
+    ResNet-34 & 2 min & 7\,350\,721 & 0,540 $\pm$ 0,039 & 0,514 [0,429--0,601] \\
+    ResNet-50 & 2 min & 16\,479\,937 & 0,569 $\pm$ 0,098 & 0,536 [0,448--0,618] \\
     \bottomrule
   \end{tabular}
-
-  \vspace{0.3cm}
-  \raggedright
-  \small
-  \begin{itemize}
-    \item Sem nenhuma variável clínica, a representação iguala as clínicas;
-          a ResNet-18 treinada no desfecho tinha obtido 0,508
-    \item Com as clínicas, chega ao nível de clínicas + FEVE + Pro-BNP medidos
-  \end{itemize}
-  \fonte{Limiar de Youden escolhido no treino de cada partição.}
+  \msg{Nem a largura nem a profundidade melhoraram o desempenho.}
 \end{frame}
 
-\begin{frame}{Aprendizado autossupervisionado}
+% 28
+\begin{frame}{Cenário I: atenção e busca de hiperparâmetros}
   \centering
-  \footnotesize
-  \begin{tabular}{lcl}
-    \toprule
-    Método (sem rótulos) & AUC [IC 95\,\%] & O que aconteceu no treino \\
-    \midrule
-    Extrator aleatório (controle) & 0,529 [0,437--0,615] & sem treino \\
-    Autoencoder                   & 0,494 [0,413--0,576] & perda praticamente constante \\
-    Mascarado                     & 0,555 [0,476--0,649] & perda praticamente constante \\
-    Contrastivo                   & \auc{0,590} [0,501--0,677] & perda de validação em queda \\
-    \midrule
-    Rede multitarefa              & \auc{0,682} [0,600--0,763] & 45 atributos clínicos \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{0.5cm}
-  \raggedright
-  \small
-  \begin{itemize}
-    \item Só o contrastivo aprendeu algo além do extrator aleatório:
-          reconhece janelas do mesmo paciente
-    \item Sem rótulos, os padrões encontrados são fracos; com as clínicas,
-          nenhum dos três difere delas
-    \item Orientar a rede por atributos clínicos foi o que fez diferença
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Comparação das abordagens}
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[
-        width=0.62\textwidth, height=5.4cm, scale only axis=false,
-        xmin=0.40, xmax=0.86,
-        ymin=0.4, ymax=6.6,
-        xtick={0.4,0.5,0.6,0.7,0.8},
-        ytick={1,...,6},
-        yticklabels={
-          Multitarefa + clínicas,
-          Rede multitarefa (só Holter),
-          Seis variáveis clínicas,
-          Dois marcadores pré-especificados,
-          Contrastivo (sem rótulos),
-          ResNet-18 treinada no desfecho},
-        yticklabel style={font=\scriptsize},
-        xticklabel style={font=\scriptsize, /pgf/number format/use comma},
-        xlabel={AUC fora da partição (IC 95\,\%)},
-        xlabel style={font=\scriptsize},
-        axis line style={cinza!60},
-        xmajorgrids, grid style={cinza!20},
-        ytick style={draw=none},
-        clip=false,
-      ]
-      \draw[cinza, dashed] (axis cs:0.5,0.4) -- (axis cs:0.5,6.6);
-      \node[rotulo, above] at (axis cs:0.5,6.6) {acaso};
-      % intervalos de confianca, ponto e valor
-      \draw[azulesc!60, line width=1.4pt] (axis cs:0.431,6) -- (axis cs:0.588,6);
-      \fill[azulesc] (axis cs:0.508,6) circle (2.8pt);
-      \node[font=\scriptsize, anchor=west] at (axis cs:0.80,6) {0{,}508};
-      \draw[azulesc!60, line width=1.4pt] (axis cs:0.501,5) -- (axis cs:0.677,5);
-      \fill[azulesc] (axis cs:0.59,5) circle (2.8pt);
-      \node[font=\scriptsize, anchor=west] at (axis cs:0.80,5) {0{,}590};
-      \draw[azulesc!60, line width=1.4pt] (axis cs:0.563,4) -- (axis cs:0.726,4);
-      \fill[azulesc] (axis cs:0.647,4) circle (2.8pt);
-      \node[font=\scriptsize, anchor=west] at (axis cs:0.80,4) {0{,}647};
-      \draw[azulesc!60, line width=1.4pt] (axis cs:0.58,3) -- (axis cs:0.743,3);
-      \fill[azulesc] (axis cs:0.661,3) circle (2.8pt);
-      \node[font=\scriptsize, anchor=west] at (axis cs:0.80,3) {0{,}661};
-      \draw[destaque!60, line width=1.4pt] (axis cs:0.6,2) -- (axis cs:0.763,2);
-      \fill[destaque] (axis cs:0.682,2) circle (2.8pt);
-      \node[font=\scriptsize, anchor=west] at (axis cs:0.80,2) {0{,}682};
-      \draw[destaque!60, line width=1.4pt] (axis cs:0.621,1) -- (axis cs:0.78,1);
-      \fill[destaque] (axis cs:0.702,1) circle (2.8pt);
-      \node[font=\scriptsize, anchor=west] at (axis cs:0.80,1) {0{,}702};
-    \end{axis}
-  \end{tikzpicture}
-
-  \raggedright
-  \footnotesize
-  Nas 19 configurações treinadas direto no desfecho, a AUC ficou entre 0,48
-  e 0,56. Orientada por atributos clínicos, a rede chegou a 0,682 sem usar
-  nenhuma variável clínica.
-\end{frame}
-
-\begin{frame}{O que a rede multitarefa aprende}
   \scriptsize
-  \centering
-  \begin{tabular}{llcc}
+  \begin{tabular}{llrcc}
     \toprule
-    Atributo & Exame & AUC (morte súbita) & Aprendido pela rede \\
+    Rede & Janela & Parâmetros & AUC por partição & AUC geral [IC 95\,\%] \\
     \midrule
-    Tamanho do átrio esquerdo & ecocardiograma & \auc{0,701} & $R^2 = 0{,}02$ \\
-    Pro-BNP                   & laboratório    & \auc{0,682} & $R^2 = 0{,}11$ \\
-    FEVE                      & ecocardiograma & \auc{0,650} & $R^2 = 0{,}20$ \\
-    \midrule
-    Ondas Q                   & ECG            & 0,567 & \auc{AUC = 0,78} \\
-    TVNS                      & Holter         & 0,550 & \auc{AUC = 0,81} \\
-    QRS acima de 120\,ms      & ECG            & 0,495 & \auc{AUC = 0,92} \\
+    ResNet-18 + atenção & 2 min & 1\,491\,553 & --- & 0,493 \\
+    CNN (Optuna) & 1 min & 473\,417 & 0,574 $\pm$ 0,112 & 0,556 [0,464--0,647] \\
+    ResNet (Optuna) & 1 min & 1\,818\,049 & 0,510 $\pm$ 0,079 & 0,496 [0,411--0,584] \\
     \bottomrule
   \end{tabular}
-
-  \vspace{0.5cm}
-  \raggedright
-  \normalsize
+  \vspace{0.3cm}
   \begin{itemize}
-    \item Os atributos \textbf{elétricos} são bem aprendidos, mas pouco
-          discriminam o desfecho
-    \item Os atributos \textbf{estruturais}, que mais discriminam, são os
-          menos aprendidos
-    \item Com todos os exames medidos no modelo, a rede não acrescenta
-          informação (0,733 contra 0,728)
+    \small
+    \item Relacionar instantes distantes do registro (atenção) não ajudou.
+    \item A busca bayesiana não superou as configurações manuais: a CNN
+      encontrada obteve o mesmo valor da CNN mínima (0,554).
   \end{itemize}
 \end{frame}
 
-% ==============================================================================
-\section{Próximos passos}
-% ==============================================================================
+% 29
+\begin{frame}{Cenário I: variabilidade e análise de sensibilidade}
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \begin{block}{Variabilidade entre execuções}
+      \small
+      ResNet-18 mínima treinada duas vezes, nas mesmas partições:
+      \begin{itemize}
+        \item 0,562 $\rightarrow$ \textbf{0,480}
+      \end{itemize}
+      A diferença (0,08) é maior que a diferença entre a melhor e a pior
+      arquitetura.
+    \end{block}
+    \column{0.49\textwidth}
+    \begin{block}{Sem restrição ao ritmo sinusal}
+      \small
+      ResNet-18 em 703 pacientes e 85 casos:
+      \begin{itemize}
+        \item AUC de \textbf{0,575} [0,511--0,642], único intervalo acima de 0,5.
+      \end{itemize}
+      A rede aprende quando há um padrão reconhecível: a fibrilação atrial.
+    \end{block}
+  \end{columns}
+  \msg{O procedimento funciona; o sinal em ritmo sinusal é que não traz um
+    padrão de MSC reconhecível pelas redes.}
+\end{frame}
 
-\begin{frame}{Plano de trabalho até a defesa}
-  \footnotesize
+% 30
+\begin{frame}{Cenário I: síntese}
+  \begin{columns}[c]
+    \column{0.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figuras/roc_cenario1.pdf}
+    \column{0.48\textwidth}
+    \small
+    \begin{itemize}
+      \item 15 configurações: AUC geral entre \textbf{0,48 e 0,56}.
+      \item Sem relação com a capacidade, a janela ou a atenção.
+      \item Curvas ROC próximas da diagonal do acaso.
+      \item VPP entre 0,09 e 0,14, próximo da prevalência (0,106).
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+% 31
+\begin{frame}{Cenário II: protocolo A (segmentos de 5 min)}
   \centering
-  \begin{tabular}{p{7.6cm}c}
+  \footnotesize
+  \begin{tabular}{lrcc}
     \toprule
-    Atividade & Situação \\
+    Modelo & Variáveis & AUC geral [IC 95\,\%] & AUPRC \\
     \midrule
-    Delimitação da coorte e protocolo de avaliação & \textcolor{verde}{concluída} \\
-    Biomarcadores e redes treinadas no desfecho & \textcolor{verde}{concluída} \\
-    Rede multitarefa e aprendizado autossupervisionado & \textcolor{verde}{concluída} \\
-    Repetir as redes com mais sementes (estabilidade) & \textcolor{destaque}{planejada} \\
-    Replicar a coorte de Swee et al. (746 pacientes, derivação Y) & \textcolor{destaque}{em andamento} \\
-    Dar mais peso aos atributos estruturais na rede multitarefa & \textcolor{destaque}{planejada} \\
-    Escrita final e defesa & \textcolor{destaque}{em andamento} \\
+    Clínicas (referência) & 6 & 0,661 [0,577--0,741] & 0,233 \\
+    \midrule
+    Marcadores, logística L2 & 44 & 0,589 [0,507--0,671] & 0,180 \\
+    Marcadores, logística L1 & 44 & 0,585 [0,503--0,666] & 0,163 \\
+    \textbf{Marcadores, PCA (4) + logística} & 44 & \textbf{0,624} [0,535--0,708] & 0,232 \\
+    Marcadores, floresta aleatória & 44 & 0,621 [0,537--0,701] & 0,184 \\
     \bottomrule
   \end{tabular}
+  \vspace{0.3cm}
+  \begin{itemize}
+    \small
+    \item Três marcadores resistiram à correção de Benjamini-Hochberg: média e
+      desvio-padrão da potência HF e \textbf{desvio-padrão da frequência
+      cardíaca}.
+    \item Escolher poucos marcadores olhando toda a coorte dá cerca de 0,05 a
+      mais (otimismo); dentro da partição, 0,580.
+  \end{itemize}
+\end{frame}
+
+% 32
+\begin{frame}{Cenário II: protocolo B (segmentos de 30 s)}
+  \begin{columns}[T]
+    \column{0.47\textwidth}
+    \begin{block}{Unidade de análise}
+      \scriptsize
+      \setlength{\tabcolsep}{3pt}
+      \begin{tabular}{lc}
+        \toprule
+        Análise & Signif. (de 24) \\
+        \midrule
+        Por segmento (328\,807) & 22 \\
+        Por paciente (517) & 2 \\
+        Após correção & 0 \\
+        \bottomrule
+      \end{tabular}
+      \vspace{0.1cm}\\
+      Contar segmentos como pacientes infla a significância
+      (pseudorreplicação \cite{hurlbert1984pseudoreplication}).
+    \end{block}
+    \column{0.51\textwidth}
+    \begin{block}{Modelos}
+      \footnotesize
+      \begin{itemize}
+        \item Treinados \textbf{sobre cada segmento}: 0,53 a 0,56.
+        \item Sobre os resumos por paciente (12 configurações): \textbf{0,619}
+          [0,537--0,700] no melhor caso (PCA, conjunto 2).
+        \item Padrão consistente: casos com \textbf{menor variação da
+          frequência} ao longo do dia.
+      \end{itemize}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+% 33
+\begin{frame}{Cenário II: marcadores pré-especificados}
+  \begin{columns}[c]
+    \column{0.52\textwidth}
+    \small
+    \begin{itemize}
+      \item Escolhidos \textbf{de antemão}, pela literatura, sem olhar o
+        desfecho:
+        \begin{itemize}
+          \item desvio-padrão da frequência cardíaca entre os segmentos;
+          \item carga de ectopia.
+        \end{itemize}
+      \item Logística L2, um modelo por derivação.
+      \item AUC entre 0,635 e 0,660; \textbf{0,647} [0,563--0,726] na
+        derivação de melhor qualidade.
+    \end{itemize}
+    \column{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[xbar, width=4.8cm, height=4.4cm, xmin=0.45, xmax=0.72, xtick={0.5,0.6,0.7},
+          symbolic y coords={I: rede,II: PCA,II: 2 marc.,III: clínicas},
+          ytick=data, y tick label style={font=\scriptsize},
+          x tick label style={font=\scriptsize, /pgf/number format/use comma},
+          nodes near coords, nodes near coords style={font=\scriptsize, /pgf/number format/use comma, /pgf/number format/precision=3},
+          bar width=8pt, xlabel={\scriptsize AUC geral}, enlarge y limits=0.2]
+        \addplot[fill=destaque!60, draw=destaque] coordinates {
+          (0.562,I: rede) (0.624,II: PCA) (0.647,II: 2 marc.) (0.661,III: clínicas)};
+        \draw[dashed, cinza] (axis cs:0.5,{[normalized]-1}) -- (axis cs:0.5,{[normalized]4});
+      \end{axis}
+    \end{tikzpicture}
+  \end{columns}
+  \msg{Dois marcadores ligados à frequência cardíaca: 0,085 acima da melhor rede.}
+\end{frame}
+
+% 34
+\begin{frame}{Cenário III: variáveis clínicas e exames}
+  \centering
+  \footnotesize
+  \begin{tabular}{lc}
+    \toprule
+    Modelo (logística L2) & AUC geral [IC 95\,\%] \\
+    \midrule
+    Seis variáveis clínicas & 0,661 [0,577--0,741] \\
+    Ecocardiograma & 0,714 [0,641--0,774] \\
+    Clínicas + ecocardiograma & 0,720 [0,640--0,789] \\
+    Clínicas + todos os exames & \textbf{0,733} [0,656--0,804] \\
+    Todos os exames & 0,738 [0,666--0,809] \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.3cm}
+  \begin{itemize}
+    \small
+    \item As variáveis clínicas superam todas as redes do Cenário I.
+    \item O ecocardiograma foi o grupo de exames mais informativo
+      ($+0{,}058$ sobre as clínicas).
+    \item Pro-BNP: $+0{,}047$; laudo do ECG e medidas do Holter acrescentaram pouco.
+  \end{itemize}
+\end{frame}
+
+% 35
+\begin{frame}{Cenário III: combinação com o ECG}
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \begin{block}{Clínicas + marcadores}
+      \small
+      \begin{itemize}
+        \item Protocolo A: 0,661 $\rightarrow$ \textbf{0,681} (L1).
+        \item Dois pré-especificados: 0,679 a 0,683.
+        \item Ganho pequeno e consistente, \textbf{sem significância}
+          estatística.
+      \end{itemize}
+    \end{block}
+    \column{0.49\textwidth}
+    \begin{block}{Clínicas + sinal bruto}
+      \footnotesize
+      \begin{tabular}{lc}
+        \toprule
+        Estratégia & AUC geral \\
+        \midrule
+        Treino conjunto & 0,516 \\
+        Taxa reduzida & 0,579 \\
+        Extrator congelado & 0,577 \\
+        \bottomrule
+      \end{tabular}
+      \vspace{0.1cm}\\
+      Pior que as clínicas sozinhas: o sinal treinado acrescenta
+      variabilidade, não informação.
+    \end{block}
+  \end{columns}
+\end{frame}
+
+% 36
+\begin{frame}{Síntese dos três cenários}
+  \begin{columns}[c]
+    \column{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figuras/roc_cenarios_melhores.pdf}
+    \column{0.51\textwidth}
+    \centering
+    \scriptsize
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{clc}
+      \toprule
+      & Melhores resultados & AUC geral \\
+      \midrule
+      I & ResNet-18 mínima & 0,562 \\
+        & CNN (Optuna) & 0,556 \\
+        & CNN mínima, 10 s & 0,554 \\
+      \midrule
+      II & 2 marcadores pré-especificados & 0,647 \\
+         & PCA (4), protocolo A & 0,624 \\
+         & PCA (4), protocolo B & 0,619 \\
+      \midrule
+      III & Exames do estudo & 0,738 \\
+          & Clínicas + exames & 0,733 \\
+          & Clínicas + ecocardiograma & 0,720 \\
+      \bottomrule
+    \end{tabular}
+  \end{columns}
 \end{frame}
 
 % ==============================================================================
+\section{Conclusões}
+% ==============================================================================
+
+% 37
+\begin{frame}{Conclusões}
+  \begin{itemize}
+    \item \textbf{Cenário I}: redes profundas sobre o sinal bruto ficaram entre
+      0,48 e 0,56, sem se distinguir do acaso; em ritmo não sinusal, a mesma
+      rede aprende.
+    \item \textbf{Cenário II}: os marcadores extraídos do ECG superaram as
+      redes; a informação está em \textbf{poucos marcadores} ligados à
+      frequência cardíaca (0,647).
+    \item \textbf{Cenário III}: clínicas sozinhas, 0,661; somadas aos
+      marcadores, 0,681; com os exames, até 0,738.
+  \end{itemize}
+  \msg{O processamento do ECG com extração de características produziu
+    preditores de MSC superiores ao aprendizado profundo sobre o sinal bruto.}
+\end{frame}
+
+% 38
+\begin{frame}{Comparação com os trabalhos relacionados}
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \small
+    \begin{itemize}
+      \item \textbf{Kim et al.}: 0,60 no subgrupo de insuficiência cardíaca,
+        coerente com as redes deste trabalho.
+      \item \textbf{Ramírez et al.}: 0,73 sem validação separada.
+      \item \textbf{Swee et al.}: replicação nas condições deles (746
+        pacientes, derivação Y, segmentos contíguos).
+    \end{itemize}
+    \column{0.46\textwidth}
+    \centering
+    \scriptsize
+    \begin{tabular}{lc}
+      \toprule
+      Modelo (só ECG) & AUC por partição \\
+      \midrule
+      44 marcadores, L1 & 0,605 $\pm$ 0,088 \\
+      4 pré-especificados & \textbf{0,659} $\pm$ 0,078 \\
+      Swee et al. & 0,682 $\pm$ 0,030 \\
+      \bottomrule
+    \end{tabular}
+  \end{columns}
+  \msg{Desempenho próximo ao de Swee et al., com modelos mais simples; a
+    diferença está dentro do intervalo de confiança.}
+\end{frame}
+
+% 39
+\begin{frame}{Limitações e trabalhos futuros}
+  \begin{columns}[T]
+    \column{0.47\textwidth}
+    \begin{block}{Limitações}
+      \footnotesize
+      \begin{itemize}
+        \item Coorte única, sem validação externa.
+        \item Um único Holter por paciente.
+        \item Busca de hiperparâmetros sem validação cruzada aninhada.
+        \item Desfecho binário em 4 anos, sem o tempo até o evento.
+      \end{itemize}
+    \end{block}
+    \column{0.51\textwidth}
+    \begin{block}{Trabalhos futuros}
+      \footnotesize
+      \begin{itemize}
+        \item Modelos sequenciais sobre os marcadores dos segmentos.
+        \item Representações pré-treinadas e orientadas por atributos clínicos.
+        \item Marcadores da repolarização (alternância da onda T).
+        \item Análise de sobrevivência com riscos competitivos.
+        \item Validação externa.
+      \end{itemize}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+% 40
+\begin{frame}[standout]
+  Obrigado!\\[0.4cm]
+  {\normalsize Perguntas?}\\[0.4cm]
+  {\small Daniel Oliveira dos Santos --- MDCC/UFC}\\[0.2cm]
+  {\scriptsize Apoio: CAPES --- Código de Financiamento 001}
+\end{frame}
+
+\appendix
+
 \begin{frame}[allowframebreaks]{Referências}
   \footnotesize
   \bibliography{demo}
-\end{frame}
-
-\begin{frame}[standout]
-  Obrigado!\\[0.4cm]
-  {\normalsize Daniel Oliveira dos Santos}\\
-  {\small MDCC/UFC}\\[0.3cm]
-  {\scriptsize Apoio: CAPES --- Código de Financiamento 001}
 \end{frame}
 
 \end{document}
