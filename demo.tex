@@ -33,7 +33,9 @@
 \renewcommand{\bibsection}{}
 \newcommand{\auc}[1]{\textbf{#1}}
 \newcommand{\fonte}[1]{\par\vfill{\scriptsize\color{cinza}#1}}
-\newcommand{\msg}[1]{\par\vfill\begin{center}\colorbox{destaque!15}{\parbox{0.92\linewidth}{\centering\small #1}}\end{center}}
+% mensagem principal de cada slide: guardada como nota do apresentador
+% (nao aparece no slide; para ve-las, use \setbeameroption{show notes})
+\newcommand{\msg}[1]{\note{#1}}
 
 \title{Aprendizado de máquina para estratificação\\
   de risco de morte súbita cardíaca\\
