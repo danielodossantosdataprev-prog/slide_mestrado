@@ -36,6 +36,7 @@
 % mensagem principal de cada slide: guardada como nota do apresentador
 % (nao aparece no slide; para ve-las, use \setbeameroption{show notes})
 \newcommand{\msg}[1]{\note{#1}}
+\newcommand{\pergunta}[1]{\par\vfill\begin{center}{\color{destaque}\bfseries\itshape #1}\end{center}}
 
 \title{Aprendizado de máquina para estratificação\\
   de risco de morte súbita cardíaca\\
@@ -66,25 +67,26 @@
 
 % 3
 \begin{frame}{Motivação do problema}
+  \textbf{Na insuficiência cardíaca, a morte ocorre por duas vias}
   \begin{itemize}
-    \item Na insuficiência cardíaca, a morte ocorre por duas vias:
-      \begin{itemize}
-        \item \textbf{falência de bomba}: deterioração progressiva;
-        \item \textbf{morte súbita cardíaca (MSC)}: evento abrupto, em geral por
-          arritmia ventricular, em paciente muitas vezes estável.
-      \end{itemize}
-    \item A MSC responde por cerca de \textbf{metade} das mortes nessa
-      população \cite{tomaselli2004sudden}.
-    \item Prevenção: o \textbf{cardiodesfibrilador implantável}, que reduziu a
-      mortalidade \cite{bardy2005amiodarone}.
-    \item A indicação baseia-se na \textbf{fração de ejeção (FEVE)}, critério
-      imperfeito \cite{zeppenfeld2022esc}:
-      \begin{itemize}
-        \item muitos pacientes com o dispositivo nunca o utilizam;
-        \item parte das mortes súbitas ocorre com FEVE acima do limiar.
-      \end{itemize}
+    \item \textbf{falência de bomba}: deterioração progressiva;
+    \item \textbf{morte súbita cardíaca (MSC)}: evento abrupto, em geral por
+      arritmia ventricular, em paciente muitas vezes estável;
+    \item a MSC responde por cerca de \textbf{metade} das mortes
+      \cite{tomaselli2004sudden}.
   \end{itemize}
-  \msg{Há espaço para ferramentas que estratifiquem melhor o risco de MSC.}
+  \vspace{0.25cm}
+  \textbf{Prevenção: o cardiodesfibrilador implantável}
+  \cite{bardy2005amiodarone}
+  \begin{itemize}
+    \item indicado pela \textbf{fração de ejeção (FEVE)}, critério imperfeito
+      \cite{zeppenfeld2022esc};
+    \item muitos pacientes com o dispositivo nunca o utilizam;
+    \item parte das mortes súbitas ocorre com FEVE acima do limiar.
+  \end{itemize}
+  \pergunta{Se a MSC nasce de uma instabilidade elétrica do coração, o Holter
+    de 24 horas, que registra essa atividade por um dia inteiro, já guarda
+    sinais do risco?}
 \end{frame}
 
 % 4
@@ -142,10 +144,8 @@
 
 % 6
 \begin{frame}{Desafios e lacunas}
-  \begin{itemize}
-    \item \textbf{Predição $\neq$ diagnóstico}: o evento ocorre meses ou anos
-      depois do Holter, e as coortes têm poucas centenas de pacientes.
-  \end{itemize}
+  \textbf{Predição $\neq$ diagnóstico}: o evento ocorre meses ou anos
+  depois do Holter, e as coortes têm poucas centenas de pacientes.
   \vspace{0.2cm}
   \begin{enumerate}
     \item \textbf{Falta de comparação direta}: cada estudo avaliou uma única
@@ -814,16 +814,18 @@
   \begin{columns}[c]
     \column{0.52\textwidth}
     \small
+    \textbf{Escolhidos de antemão, pela literatura}
     \begin{itemize}
-      \item Escolhidos \textbf{de antemão}, pela literatura, sem olhar o
-        desfecho:
-        \begin{itemize}
-          \item desvio-padrão da frequência cardíaca entre os segmentos;
-          \item carga de ectopia.
-        \end{itemize}
-      \item Logística L2, um modelo por derivação.
-      \item AUC entre 0,635 e 0,660; \textbf{0,647} [0,563--0,726] na
-        derivação de melhor qualidade.
+      \item desvio-padrão da frequência cardíaca entre os segmentos;
+      \item carga de ectopia;
+      \item sem olhar o desfecho desta coorte.
+    \end{itemize}
+    \vspace{0.2cm}
+    \textbf{Modelo e resultado}
+    \begin{itemize}
+      \item logística L2, um modelo por derivação;
+      \item AUC entre 0,635 e 0,660;
+      \item \textbf{0,647} [0,563--0,726] na derivação de melhor qualidade.
     \end{itemize}
     \column{0.45\textwidth}
     \centering
