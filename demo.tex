@@ -1,6 +1,6 @@
 \documentclass[10pt,aspectratio=169]{beamer}
 \usepackage{appendixnumberbeamer}
-\usepackage[numbers,sort&compress]{natbib}
+\usepackage[alf]{abntex2cite}
 \usepackage{booktabs}
 \usepackage[scale=2]{ccicons}
 \usepackage{graphicx}
@@ -12,7 +12,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.16}
 \usetheme[progressbar=frametitle, sectionpage=none]{metropolis}
-\bibliographystyle{rusnat}
+\bibliographystyle{abntex2-alf}
 \usetikzlibrary{arrows,arrows.meta,positioning,calc,fit,shapes.misc,decorations.pathreplacing}
 
 % ---- cores (as do tema metropolis) e estilos dos diagramas ----
@@ -30,7 +30,7 @@
   rotulo/.style={font=\scriptsize, text=cinza},
 }
 \setbeamerfont{title}{size=\large}
-\renewcommand{\bibsection}{}
+%\renewcommand{\bibsection}{}
 \newcommand{\auc}[1]{\textbf{#1}}
 \newcommand{\fonte}[1]{\par\vfill{\scriptsize\color{cinza}#1}}
 % mensagem principal de cada slide: guardada como nota do apresentador
@@ -189,7 +189,7 @@
 
 % 8
 \begin{frame}{Marcadores do ECG e clínicos na coorte MUSIC}
-  \begin{block}{Ramírez et al. (2017) \cite{ramirez2017sudden}}
+  \begin{block}{\citeonline{ramirez2017sudden}}
     \small
     \begin{itemize}
       \item 597 pacientes em ritmo sinusal, 49 mortes súbitas.
@@ -197,7 +197,7 @@
       \item AUC de 0,73 na FEVE reduzida, \textbf{sem validação separada}.
     \end{itemize}
   \end{block}
-  \begin{block}{Swee et al. (2026) \cite{swee2026multimodal}}
+  \begin{block}{\citeonline{swee2026multimodal}}
     \small
     \begin{itemize}
       \item 746 pacientes, \textbf{sem restrição de ritmo}, derivação Y.
@@ -210,7 +210,7 @@
 
 % 9
 \begin{frame}{Aprendizado profundo no Holter e posicionamento}
-  \begin{block}{Kim et al. (2025) \cite{kim2025deep}}
+  \begin{block}{\citeonline{kim2025deep}}
     \small
     \begin{itemize}
       \item 1\,108 pacientes (infarto ou insuficiência cardíaca), 70 eventos.
