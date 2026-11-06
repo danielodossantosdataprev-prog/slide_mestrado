@@ -35,7 +35,8 @@
 \newcommand{\fonte}[1]{\par\vfill{\scriptsize\color{cinza}#1}}
 % mensagem principal de cada slide: guardada como nota do apresentador
 % (nao aparece no slide; para ve-las, use \setbeameroption{show notes})
-\newcommand{\msg}[1]{\note{#1}}
+\newcommand{\msg}[1]{\par\vfill\begin{block}{Em resumo}#1\end{block}}
+\metroset{block=fill}
 % caixa de destaque (perguntas e equacoes): texto normal sobre fundo cinza claro
 \newcommand{\caixacinza}[1]{\begin{center}\colorbox{black!7}{\parbox{0.9\linewidth}{\centering #1}}\end{center}}
 \newcommand{\pergunta}[1]{\par\vfill\caixacinza{#1}}
@@ -73,44 +74,56 @@
 % ==============================================================================
 
 % 3
-\begin{frame}{Motivação do problema}
-  \textbf{Na insuficiência cardíaca, a morte ocorre por duas vias}
-  \begin{itemize}
-    \item \textbf{falência de bomba}: deterioração progressiva;
-    \item \textbf{morte súbita cardíaca (MSC)}: evento abrupto, em geral por
-      arritmia ventricular, em paciente muitas vezes estável;
-    \item a MSC responde por cerca de \textbf{metade} das mortes
-      \cite{tomaselli2004sudden}.
-  \end{itemize}
-  \vspace{0.25cm}
-  \textbf{Prevenção: o cardiodesfibrilador implantável}
-  \cite{bardy2005amiodarone}
-  \begin{itemize}
-    \item indicado pela \textbf{fração de ejeção (FEVE)}, critério imperfeito
-      \cite{zeppenfeld2022esc};
-    \item muitos pacientes com o dispositivo nunca o utilizam;
-    \item parte das mortes súbitas ocorre com FEVE acima do limiar.
-  \end{itemize}
-  \pergunta{Se a MSC nasce de uma instabilidade elétrica do coração, o Holter
-    de 24 horas, que registra essa atividade por um dia inteiro, já guarda
-    sinais do risco?}
+\begin{frame}{Morte súbita cardíaca: quando o coração para sem aviso}
+  Na insuficiência cardíaca, a morte chega por duas vias: a
+  \textbf{falência de bomba}, lenta e progressiva, e a \textbf{morte súbita
+  cardíaca (MSC)}, abrupta.
+  \vspace{0.4em}
+  \begin{columns}[T]
+    \column{0.32\textwidth}
+    \centering
+    \textbf{O que é}\\[2pt]
+    \small evento abrupto, em geral por arritmia ventricular, em paciente
+    muitas vezes estável
+    \column{0.32\textwidth}
+    \centering
+    \textbf{Quanto pesa}\\[2pt]
+    \small cerca de \textbf{metade} das mortes na insuficiência cardíaca
+    \cite{tomaselli2004sudden}
+    \column{0.32\textwidth}
+    \centering
+    \textbf{Como se previne}\\[2pt]
+    \small cardiodesfibrilador implantável, indicado pela fração de ejeção
+    (FEVE) \cite{bardy2005amiodarone}
+  \end{columns}
+  \vspace{0.8em}
+  \begin{block}{O que esses fatos têm em comum?}
+    A MSC nasce de uma \textbf{falha elétrica} do coração --- e é justamente
+    a atividade elétrica que o ECG registra. O Holter de 24 horas, que a
+    acompanha por um dia inteiro, já guardaria sinais desse risco?
+  \end{block}
 \end{frame}
 
 % 4
-\begin{frame}{Modelos preditivos para a morte súbita cardíaca}
-  \begin{columns}[T]
+\begin{frame}{O que queremos prever?}
+  \begin{columns}[c]
     \column{0.55\textwidth}
-    \begin{itemize}
-      \item Estimam, para cada paciente, a \textbf{probabilidade} do evento em
-        um horizonte definido.
-      \item Permitem ordenar os pacientes por risco, em vez de depender de um
-        único limiar clínico.
-      \item O \textbf{Holter de 24 horas} é não invasivo, barato e amplamente
-        disponível.
-      \item Capta ectopias, pausas e variações da frequência entre sono e
-        vigília.
-    \end{itemize}
-    \column{0.43\textwidth}
+    \begin{block}{A probabilidade de MSC em quatro anos}
+      \begin{itemize}
+        \item Para cada paciente, um \textbf{risco individual}, e não um sim
+          ou não por limiar.
+        \item Permite ordenar os pacientes e concentrar a prevenção em quem
+          mais precisa.
+      \end{itemize}
+    \end{block}
+    \begin{block}{A partir do Holter de 24 horas}
+      \begin{itemize}
+        \item Exame não invasivo, barato e amplamente disponível.
+        \item Registra ectopias, pausas e a variação da frequência entre sono
+          e vigília.
+      \end{itemize}
+    \end{block}
+    \column{0.42\textwidth}
     \centering
     \begin{tikzpicture}[node distance=0.35cm]
       \node[caixa, text width=3.6cm] (h) {Holter de 24 h\\3 derivações, 200 Hz};
@@ -123,70 +136,84 @@
 \end{frame}
 
 % 5
-\begin{frame}{O que a literatura tem feito}
+\begin{frame}{Por que a fração de ejeção não basta}
+  Hoje, a decisão de implantar o cardiodesfibrilador depende basicamente de
+  \textbf{um único número}: a FEVE abaixo de um limiar
+  \cite{zeppenfeld2022esc}.
+  \vspace{0.4em}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \begin{block}{Quem recebe o dispositivo}
+      Muitos pacientes nunca chegam a utilizá-lo: o critério indica
+      pessoas que não teriam a arritmia.
+    \end{block}
+    \column{0.48\textwidth}
+    \begin{block}{Quem fica de fora}
+      Parte das mortes súbitas ocorre com FEVE \textbf{acima} do limiar: o
+      critério não alcança esses pacientes.
+    \end{block}
+  \end{columns}
+  \vspace{0.6em}
+  \begin{block}{Por que isso importa}
+    Há espaço para ferramentas que \textbf{estratifiquem melhor} o risco de
+    MSC --- e o ECG, que mede diretamente a atividade elétrica, é um
+    candidato natural.
+  \end{block}
+\end{frame}
+
+% 6
+\begin{frame}{Como a literatura tem abordado o problema}
+  Os trabalhos se organizam em duas frentes, raramente comparadas entre si:
+  \vspace{0.3em}
   \begin{columns}[T]
     \column{0.49\textwidth}
     \begin{block}{Marcadores definidos por especialistas}
-      \small
       \begin{itemize}
-        \item VFC, ectopia, turbulência, dinâmica da repolarização.
-        \item Combinados com variáveis clínicas em modelos estatísticos ou de
-          aprendizado de máquina clássico.
+        \item VFC, ectopia, turbulência, repolarização.
+        \item Combinados com variáveis clínicas em modelos estatísticos.
         \item Na base MUSIC: \cite{ramirez2017sudden, swee2026multimodal}.
       \end{itemize}
     \end{block}
     \column{0.49\textwidth}
     \begin{block}{Redes profundas sobre o sinal}
-      \small
       \begin{itemize}
-        \item Sucesso em diagnóstico: arritmias no Holter
-          \cite{hannun2019cardiologist}, ECG de 12 derivações
-          \cite{ribeiro2020automatic}.
-        \item Na predição de eventos, os melhores resultados usaram redes
-          \textbf{pré-treinadas} em grandes bases \cite{kim2025deep}.
+        \item Sucesso no \textbf{diagnóstico} de arritmias
+          \cite{hannun2019cardiologist, ribeiro2020automatic}.
+        \item Na \textbf{predição} de eventos, os melhores resultados usaram
+          redes pré-treinadas em grandes bases \cite{kim2025deep}.
       \end{itemize}
     \end{block}
   \end{columns}
-\end{frame}
-
-% 6
-\begin{frame}{Desafios e lacunas}
-  \textbf{Predição $\neq$ diagnóstico}: o evento ocorre meses ou anos
-  depois do Holter, e as coortes têm poucas centenas de pacientes.
-  \vspace{0.2cm}
-  \begin{enumerate}
-    \item \textbf{Falta de comparação direta}: cada estudo avaliou uma única
-      abordagem, em coortes e protocolos diferentes.
-    \item \textbf{Avaliação otimista}: métricas por trecho do sinal (cada
-      paciente conta centenas de vezes) e seleção de variáveis com o
-      desfecho de toda a coorte \cite{kapoor2023leakage}.
-    \item \textbf{Fibrilação atrial na coorte}: ritmo fácil de reconhecer e de
-      pior prognóstico, que pode inflar a discriminação.
-  \end{enumerate}
-  \msg{Comparar as abordagens nos mesmos pacientes, com avaliação por paciente
-    e em ritmo sinusal.}
+  \vspace{0.5em}
+  \begin{block}{Prever não é diagnosticar}
+    O evento ocorre meses ou anos depois do exame, e as coortes têm poucas
+    centenas de pacientes.
+  \end{block}
 \end{frame}
 
 % 7
-\begin{frame}{Objetivos}
+\begin{frame}{Objetivo e contribuição deste trabalho}
+  \small
   \begin{block}{Objetivo geral}
-    \small Investigar métodos de aprendizado de máquina e de pré-processamento
-    do ECG para prever a MSC em pacientes com insuficiência cardíaca crônica,
-    a partir do Holter de 24 horas, em quatro anos de acompanhamento.
+    Investigar métodos de aprendizado de máquina e de pré-processamento do
+    ECG para prever a MSC em pacientes com insuficiência cardíaca crônica, a
+    partir do Holter de 24 horas, em quatro anos de acompanhamento.
   \end{block}
-  \begin{block}{Objetivos específicos}
-    \small
-    \begin{itemize}
-      \item[(i)] Comparar três cenários:
-        \begin{itemize}
-          \item[I.] aprendizado profundo sobre o sinal bruto;
-          \item[II.] pré-processamento, extração de características e
-            aprendizado de máquina clássico;
-          \item[III.] variáveis clínicas, isoladas e combinadas ao ECG.
-        \end{itemize}
-      \item[(ii)] Quantificar o ganho de combinar dados clínicos e do ECG.
-      \item[(iii)] Posicionar os resultados em relação à literatura.
-    \end{itemize}
+  Três lacunas motivam o trabalho:
+  \begin{enumerate}\footnotesize
+    \item \textbf{falta de comparação direta}: cada estudo avaliou uma única
+      abordagem, em coortes e protocolos diferentes;
+    \item \textbf{avaliação otimista}: métricas por trecho do sinal e seleção
+      de variáveis com o desfecho de toda a coorte \cite{kapoor2023leakage};
+    \item \textbf{fibrilação atrial na coorte}, que pode inflar a
+      discriminação.
+  \end{enumerate}
+  \vspace{0.2em}
+  \begin{block}{Contribuição: três cenários nos mesmos 517 pacientes}
+    \textbf{I.} redes profundas sobre o sinal bruto; \textbf{II.} marcadores
+    extraídos do ECG com aprendizado de máquina clássico; \textbf{III.}
+    variáveis clínicas, isoladas e combinadas ao ECG --- com avaliação por
+    paciente e em ritmo sinusal.
   \end{block}
 \end{frame}
 
@@ -195,7 +222,7 @@
 % ==============================================================================
 
 % 8
-\begin{frame}{Marcadores do ECG e clínicos na coorte MUSIC}
+\begin{frame}{Na coorte MUSIC: marcadores do ECG e variáveis clínicas}
   \begin{block}{\citeonline{ramirez2017sudden}}
     \small
     \begin{itemize}
@@ -216,7 +243,7 @@
 \end{frame}
 
 % 9
-\begin{frame}{Aprendizado profundo no Holter e posicionamento}
+\begin{frame}{Redes profundas no Holter, e onde este trabalho se encaixa}
   \begin{block}{\citeonline{kim2025deep}}
     \small
     \begin{itemize}
@@ -243,7 +270,7 @@
 % ==============================================================================
 
 % 10
-\begin{frame}{Pré-processamento do ECG}
+\begin{frame}{Antes de analisar: limpar o sinal do ECG}
   \begin{columns}[T]
     \column{0.5\textwidth}
     \small
@@ -264,7 +291,7 @@
 \end{frame}
 
 % 11
-\begin{frame}{Extração de características do ECG}
+\begin{frame}{O que extraímos do ECG: ritmo, ectopia e morfologia}
   \begin{columns}[T]
     \column{0.52\textwidth}
     \small
@@ -296,7 +323,7 @@
 \end{frame}
 
 % 12
-\begin{frame}{Redes convolucionais unidimensionais}
+\begin{frame}{Redes convolucionais: aprender padrões direto do sinal}
   \small
   \begin{itemize}
     \item \textbf{Convolução 1D}: filtros que deslizam no tempo e detectam
@@ -323,7 +350,7 @@
 \end{frame}
 
 % 13
-\begin{frame}{Redes residuais}
+\begin{frame}{Redes residuais: como treinar redes mais profundas}
   \begin{columns}[T]
     \column{0.5\textwidth}
     \small
@@ -356,7 +383,7 @@
 \end{frame}
 
 % 14
-\begin{frame}{Mecanismo de atenção}
+\begin{frame}{Atenção: relacionar instantes distantes do registro}
   \small
   \begin{itemize}
     \item Convoluções relacionam apenas instantes \textbf{vizinhos}; ao final
@@ -371,7 +398,7 @@
 \end{frame}
 
 % 15
-\begin{frame}{Modelos de aprendizado de máquina clássico}
+\begin{frame}{Modelos clássicos: poucas variáveis, poucos eventos}
   \begin{columns}[T]
     \column{0.49\textwidth}
     \begin{block}{Regressão logística regularizada}
@@ -396,7 +423,7 @@
 \end{frame}
 
 % 16
-\begin{frame}{Avaliação de classificadores}
+\begin{frame}{Como medir se o modelo separa casos de controles?}
   \begin{columns}[T]
     \column{0.52\textwidth}
     \small
@@ -429,7 +456,7 @@
 % ==============================================================================
 
 % 17
-\begin{frame}{Base de dados MUSIC}
+\begin{frame}{A base MUSIC: 992 pacientes acompanhados por quatro anos}
   \begin{itemize}
     \item Pública no PhysioNet \cite{martinyebra2025music, martinyebra2024music}.
     \item \textbf{992 pacientes} com insuficiência cardíaca crônica (NYHA II e
@@ -442,7 +469,7 @@
 \end{frame}
 
 % 18
-\begin{frame}{População de estudo e critérios de seleção}
+\begin{frame}{Quem entra no estudo: de 992 a 517 pacientes}
   \centering
   \resizebox{!}{0.74\textheight}{%
   \begin{tikzpicture}[x=1cm, y=1cm,
@@ -466,7 +493,7 @@
 \end{frame}
 
 % 19
-\begin{frame}{Variáveis clínicas e exames}
+\begin{frame}{O que se sabe do paciente além do Holter}
   \begin{columns}[T]
     \column{0.48\textwidth}
     \begin{block}{Seis variáveis clínicas}
@@ -494,7 +521,7 @@
 \end{frame}
 
 % 20
-\begin{frame}{Pré-processamento do sinal}
+\begin{frame}{Do registro de 24 horas à entrada da rede}
   \centering
   \begin{tikzpicture}[node distance=0.45cm]
     \node[caixa, text width=2.6cm] (r) {Registro de 24 h\\X, Y, Z a 200 Hz};
@@ -516,7 +543,7 @@
 \end{frame}
 
 % 21
-\begin{frame}{Cenário I: arquiteturas avaliadas}
+\begin{frame}{Cenário I: redes de 14 mil a 16 milhões de parâmetros}
   \centering
   \footnotesize
   \begin{tabular}{llrl}
@@ -540,7 +567,7 @@
 \end{frame}
 
 % 22
-\begin{frame}{Cenário I: treinamento das redes}
+\begin{frame}{Cenário I: como as redes foram treinadas}
   \begin{columns}[T]
     \column{0.52\textwidth}
     \small
@@ -565,7 +592,7 @@
 \end{frame}
 
 % 23
-\begin{frame}{Cenário II: protocolos de extração dos marcadores}
+\begin{frame}{Cenário II: dois protocolos para extrair os marcadores}
   \centering
   \footnotesize
   \begin{tabular}{lll}
@@ -591,7 +618,7 @@
 \end{frame}
 
 % 24
-\begin{frame}{Cenário III: variáveis clínicas e combinação com o ECG}
+\begin{frame}{Cenário III: as variáveis clínicas sozinhas e somadas ao ECG}
   \centering
   \begin{tikzpicture}[node distance=0.5cm]
     \node[caixa, text width=3cm] (c) {Variáveis clínicas\\e exames};
@@ -612,7 +639,7 @@
 \end{frame}
 
 % 25
-\begin{frame}{Protocolo de avaliação}
+\begin{frame}{Como avaliamos: cada paciente testado uma única vez}
   \begin{columns}[T]
     \column{0.5\textwidth}
     \small
@@ -651,7 +678,7 @@
 % ==============================================================================
 
 % 26
-\begin{frame}{Cenário I: redes convolucionais}
+\begin{frame}{Cenário I: redes convolucionais não superaram o acaso}
   \centering
   \footnotesize
   \begin{tabular}{llrcc}
@@ -672,7 +699,7 @@
 \end{frame}
 
 % 27
-\begin{frame}{Cenário I: redes residuais}
+\begin{frame}{Cenário I: redes maiores não ajudaram}
   \centering
   \scriptsize
   \begin{tabular}{llrcc}
@@ -690,7 +717,7 @@
 \end{frame}
 
 % 28
-\begin{frame}{Cenário I: atenção e busca de hiperparâmetros}
+\begin{frame}{Cenário I: nem atenção nem busca automática mudaram o quadro}
   \centering
   \scriptsize
   \begin{tabular}{llrcc}
@@ -712,7 +739,7 @@
 \end{frame}
 
 % 29
-\begin{frame}{Cenário I: variabilidade e análise de sensibilidade}
+\begin{frame}{Cenário I: o problema está no sinal, não no procedimento}
   \begin{columns}[T]
     \column{0.49\textwidth}
     \begin{block}{Variabilidade entre execuções}
@@ -739,7 +766,7 @@
 \end{frame}
 
 % 30
-\begin{frame}{Cenário I: síntese}
+\begin{frame}{Cenário I: curvas próximas da diagonal do acaso}
   \begin{columns}[c]
     \column{0.5\textwidth}
     \centering
@@ -756,7 +783,7 @@
 \end{frame}
 
 % 31
-\begin{frame}{Cenário II: protocolo A (segmentos de 5 min)}
+\begin{frame}{Cenário II: segmentos de 5 minutos superam as redes}
   \centering
   \footnotesize
   \begin{tabular}{lrcc}
@@ -783,7 +810,7 @@
 \end{frame}
 
 % 32
-\begin{frame}{Cenário II: protocolo B (segmentos de 30 s)}
+\begin{frame}{Cenário II: segmentos de 30 s e a armadilha da pseudorreplicação}
   \begin{columns}[T]
     \column{0.47\textwidth}
     \begin{block}{Unidade de análise}
@@ -817,7 +844,7 @@
 \end{frame}
 
 % 33
-\begin{frame}{Cenário II: marcadores pré-especificados}
+\begin{frame}{Cenário II: dois marcadores da frequência bastam}
   \begin{columns}[c]
     \column{0.52\textwidth}
     \small
@@ -827,7 +854,6 @@
       \item carga de ectopia;
       \item sem olhar o desfecho desta coorte.
     \end{itemize}
-    \vspace{0.2cm}
     \textbf{Modelo e resultado}
     \begin{itemize}
       \item logística L2, um modelo por derivação;
@@ -853,7 +879,7 @@
 \end{frame}
 
 % 34
-\begin{frame}{Cenário III: variáveis clínicas e exames}
+\begin{frame}{Cenário III: as variáveis clínicas superam todas as redes}
   \centering
   \footnotesize
   \begin{tabular}{lc}
@@ -878,7 +904,7 @@
 \end{frame}
 
 % 35
-\begin{frame}{Cenário III: combinação com o ECG}
+\begin{frame}{Cenário III: somar o ECG às clínicas ajuda pouco}
   \begin{columns}[T]
     \column{0.49\textwidth}
     \begin{block}{Clínicas + marcadores}
@@ -910,7 +936,7 @@
 \end{frame}
 
 % 36
-\begin{frame}{Síntese dos três cenários}
+\begin{frame}{Os três cenários lado a lado}
   \begin{columns}[c]
     \column{0.47\textwidth}
     \centering
@@ -944,7 +970,7 @@
 % ==============================================================================
 
 % 37
-\begin{frame}{Conclusões}
+\begin{frame}{O que aprendemos}
   \begin{itemize}
     \item \textbf{Cenário I}: redes profundas sobre o sinal bruto ficaram entre
       0,48 e 0,56, sem se distinguir do acaso; em ritmo não sinusal, a mesma
@@ -960,7 +986,7 @@
 \end{frame}
 
 % 38
-\begin{frame}{Comparação com os trabalhos relacionados}
+\begin{frame}{Como esses resultados se comparam à literatura}
   \begin{columns}[T]
     \column{0.52\textwidth}
     \small
@@ -989,7 +1015,7 @@
 \end{frame}
 
 % 39
-\begin{frame}{Limitações e trabalhos futuros}
+\begin{frame}{Limitações e próximos passos}
   \begin{columns}[T]
     \column{0.47\textwidth}
     \begin{block}{Limitações}
