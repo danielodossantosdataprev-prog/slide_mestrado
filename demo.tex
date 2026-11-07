@@ -19,6 +19,8 @@
 \definecolor{destaque}{HTML}{23373B}   % paleta unica: o mesmo tom escuro do tema
 \definecolor{azulesc}{HTML}{23373B}    % fundo escuro do metropolis
 \definecolor{cinza}{HTML}{8A8A8A}
+\definecolor{melhor}{HTML}{CCF2F2}   % verde-ciano claro
+\definecolor{pior}{HTML}{F8D0D0}     % vermelho claro
 \definecolor{verde}{HTML}{23373B}
 \tikzset{
   caixa/.style={draw=azulesc!60, fill=azulesc!6, rounded corners=2pt,
@@ -821,6 +823,45 @@
     \end{itemize}
   \end{columns}
 \end{frame}
+
+% tabela das metricas das redes (tabela 24 da dissertacao)
+\begin{frame}{Cenário I: todas as métricas das redes, lado a lado}
+  \centering
+  \resizebox*{!}{6.3cm}{%
+  \begin{tabular}{lllcccccccc}
+    \toprule
+    Rede & Entrada & Janela & AUC & AUPRC & Sens. & Espec. & VPP & VPN & F1 & Acur. \\
+    \midrule
+      CNN mínima & ECG & 2 min & 0,523 & 0,139 & 0,582 & 0,448 & 0,111 & 0,900 & 0,187 & 0,462 \\
+      CNN simples & ECG & 2 min & 0,486 & 0,121 & 0,364 & 0,645 & 0,109 & 0,895 & 0,167 & 0,615 \\
+      CNN média & ECG & 2 min & \cellcolor{pior}0,485 & 0,126 & 0,309 & 0,688 & 0,106 & 0,893 & 0,157 & 0,648 \\
+      CNN mínima & ECG & 10 s & 0,554 & 0,132 & 0,691 & \cellcolor{pior}0,346 & 0,112 & 0,904 & 0,192 & \cellcolor{pior}0,383 \\
+      CNN simples & ECG & 10 s & 0,491 & 0,119 & 0,400 & 0,530 & 0,092 & 0,881 & \cellcolor{pior}0,150 & 0,516 \\
+      CNN média & ECG & 10 s & \cellcolor{pior}0,485 & \cellcolor{pior}0,110 & 0,455 & 0,485 & 0,095 & 0,882 & 0,157 & 0,482 \\
+      \midrule
+      ResNet-18 mínima & ECG & 5,12 s & 0,562 & 0,160 & 0,455 & 0,654 & 0,135 & 0,910 & 0,208 & 0,632 \\
+      ResNet-18 reduzida & ECG & 2 min & 0,504 & 0,117 & 0,582 & 0,437 & 0,110 & 0,898 & 0,184 & 0,453 \\
+      ResNet-18 completa & ECG & 2 min & 0,508 & 0,121 & 0,455 & 0,461 & \cellcolor{pior}0,091 & \cellcolor{pior}0,877 & 0,152 & 0,460 \\
+      ResNet-18 completa & ECG & 5,12 s & 0,492 & 0,129 & 0,582 & 0,442 & 0,110 & 0,899 & 0,186 & 0,456 \\
+      ResNet-34 & ECG & 2 min & 0,514 & 0,122 & 0,509 & 0,517 & 0,112 & 0,898 & 0,183 & 0,516 \\
+      ResNet-50 & ECG & 2 min & 0,536 & 0,137 & 0,455 & 0,511 & 0,100 & 0,887 & 0,163 & 0,505 \\
+      ResNet-18 + Transformer & ECG & 2 min & 0,493 & 0,134 & \cellcolor{pior}0,291 & \cellcolor{melhor}\textbf{0,703} & 0,105 & 0,893 & 0,154 & \cellcolor{melhor}\textbf{0,660} \\
+      \midrule
+      CNN (Optuna) & ECG & 1 min & 0,556 & \cellcolor{melhor}\textbf{0,189} & 0,509 & 0,552 & 0,119 & 0,904 & 0,193 & 0,547 \\
+      ResNet (Optuna) & ECG & 1 min & 0,496 & 0,122 & 0,455 & 0,565 & 0,111 & 0,897 & 0,178 & 0,553 \\
+      \midrule
+      ResNet-18, conjunto & ECG + clínicos & 2 min & 0,516 & 0,141 & 0,418 & 0,548 & 0,099 & 0,888 & 0,160 & 0,534 \\
+      ResNet-18, taxa reduzida & ECG + clínicos & 2 min & \cellcolor{melhor}\textbf{0,579} & 0,180 & 0,455 & 0,673 & \cellcolor{melhor}\textbf{0,142} & 0,912 & 0,216 & 0,650 \\
+      ResNet-18, congelada & ECG + clínicos & 2 min & 0,577 & 0,146 & \cellcolor{melhor}\textbf{0,727} & 0,424 & 0,131 & \cellcolor{melhor}\textbf{0,929} & \cellcolor{melhor}\textbf{0,222} & 0,456 \\
+      ResNet-18, conjunto & ECG + clínicos & 10 s & 0,491 & 0,113 & 0,400 & 0,569 & 0,100 & 0,889 & 0,159 & 0,551 \\
+    \bottomrule
+  \end{tabular}}
+  \par\vspace{1pt}
+  {\scriptsize\color{cinza}
+  \colorbox{melhor}{melhor} \colorbox{pior}{pior} valor de cada métrica
+  \quad Limiar de Youden \quad Acaso: AUPRC e VPP = 0,106; VPN = 0,894}
+\end{frame}
+
 
 % 31
 \begin{frame}{Cenário II: segmentos de 5 minutos superam as redes}
