@@ -2,7 +2,6 @@
 \usepackage{appendixnumberbeamer}
 \usepackage[alf]{abntex2cite}
 \usepackage{booktabs}
-\usepackage[scale=2]{ccicons}
 \usepackage{graphicx}
 \usepackage{xspace}
 \usepackage{tikz}
@@ -490,6 +489,47 @@
     \foreach \y/\e in {-0.8/e1, -2.4/e2, -4.0/e3, -5.6/e4} \draw[seta] (0,\y) -- (\e.west);
   \end{tikzpicture}}
   \fonte{Classificação binária por paciente: MSC (casos) contra sobreviventes em 4 anos (controles). Prevalência de 10,6\,\%.}
+\end{frame}
+
+% 18b
+\begin{frame}{Quem entra no estudo: o fluxo em números}
+  \begin{columns}[c]
+    \column{0.55\textwidth}
+    \centering
+    \footnotesize
+    \begin{tabular}{lr}
+      \toprule
+      \textbf{Etapa} & \textbf{N} \\
+      \midrule
+      Pacientes na base MUSIC                       & 992 \\
+      \quad Excluídos: ritmo não sinusal            & 282 \\
+      Em ritmo sinusal                              & 710 \\
+      \quad Excluídos por desfecho ambíguo          & 123 \\
+      \qquad Morte não cardíaca                     & 35  \\
+      \qquad Falência de bomba                      & 67  \\
+      \qquad Vivos com seguimento $<$ 4 anos        & 21  \\
+      Casos + controles                             & 587 \\
+      \quad Sem registro de Holter                  & 47  \\
+      \quad Registro sem derivação Z                & 23  \\
+      \midrule
+      \textbf{Analisados}                           & \textbf{517} \\
+      \quad Casos (MSC)                             & 55  \\
+      \quad Controles                               & 462 \\
+      \bottomrule
+    \end{tabular}
+    \column{0.42\textwidth}
+    \begin{block}{Por que tantos critérios?}
+      \small
+      \begin{itemize}
+        \item \textbf{Rótulo confiável}: só MSC contra sobreviventes em 4 anos.
+        \item \textbf{Sinal homogêneo}: ritmo sinusal e três derivações.
+      \end{itemize}
+    \end{block}
+    \begin{block}{O custo}
+      \small Os resultados valem para insuficiência cardíaca em
+      \textbf{ritmo sinusal}; prevalência de \textbf{10,6\,\%}.
+    \end{block}
+  \end{columns}
 \end{frame}
 
 % 19
