@@ -297,35 +297,60 @@
 \end{frame}
 
 % 11
-\begin{frame}{O que extraímos do ECG: ritmo, ectopia e morfologia}
-  \begin{columns}[T]
-    \column{0.52\textwidth}
-    \small
-    \begin{itemize}
-      \item \textbf{Detecção do QRS} e delineação das ondas (NeuroKit2
-        \cite{makowski2021neurokit2}).
-      \item \textbf{Intervalos RR e NN}: NN = entre batimentos normais.
-      \item \textbf{VFC}: SDNN, RMSSD, pNN50, potências LF e HF, Poincaré
-        (SD1, SD2), entropia amostral.
-      \item \textbf{Morfologia}: QRS, QT, QTc, ondas P e T.
-      \item \textbf{Ectopia}: extrassístoles, dupletes, pausas.
-    \end{itemize}
-    \column{0.46\textwidth}
-    \scriptsize
-    \setlength{\tabcolsep}{3pt}
-    \begin{tabular}{lcc}
-      \toprule
-      Medida & 5 min & 30 s \\
-      \midrule
-      Domínio do tempo & sim & sim \\
-      LF, HF, LF/HF & sim & não \\
-      Entropia amostral & sim & não \\
-      Morfologia & sim & sim \\
-      Contagens de ectopia & sim & sim \\
-      \bottomrule
-    \end{tabular}
-    \fonte{A duração do segmento limita quais medidas são confiáveis.}
-  \end{columns}
+\begin{frame}{O que extraímos do ECG (1/2): ritmo e variabilidade}
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}
+  \renewcommand{\arraystretch}{1.12}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{0.9cm}>{\raggedright\arraybackslash}p{3.6cm}cc}
+    \toprule
+    Marcador & Definição & Unidade & Significado & 5 min & 30 s \\
+    \midrule
+    Frequência cardíaca média & 60\,000 dividido pela média dos intervalos NN & bpm & Nível de ativação do ritmo & sim & sim \\
+    Intervalo RR médio & Média dos intervalos NN & ms & Inverso da frequência & sim & sim \\
+    SDNN & Desvio-padrão dos intervalos NN & ms & Variabilidade total do segmento & sim & sim \\
+    RMSSD & Raiz da média dos quadrados das diferenças sucessivas & ms & Variação batimento a batimento; tônus vagal & sim & sim \\
+    pNN50 & Porcentagem de diferenças sucessivas maiores que 50\,ms & \% & Tônus vagal & sim & sim \\
+    SD1 e SD2 & Dispersões do gráfico de Poincaré & ms & Variabilidade de curto e de longo prazo & sim & sim \\
+    SD1/SD2 & Razão entre as duas dispersões & --- & Forma da nuvem de Poincaré & sim & sim \\
+    VLF, LF, HF, LF/HF & Potência espectral por faixa de frequência & u.a. & Modulação autonômica por mecanismo & sim & \cellcolor{pior}não \\
+    Entropia amostral & Regularidade da sequência de intervalos & --- & Complexidade do ritmo & sim & \cellcolor{pior}não \\
+    \bottomrule
+  \end{tabular}
+  \fonte{NN: intervalos entre batimentos normais. 5 min: protocolo A; 30 s:
+    protocolo B. Medidas espectrais e entropia exigem segmentos longos, por
+    isso não foram calculadas em 30 s. u.a.: unidades arbitrárias
+    (espectro normalizado pelo NeuroKit2 \cite{makowski2021neurokit2}).}
+\end{frame}
+
+\begin{frame}{O que extraímos do ECG (2/2): ectopia, pausas e morfologia}
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}
+  \renewcommand{\arraystretch}{1.0}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{1.1cm}>{\raggedright\arraybackslash}p{3.4cm}cc}
+    \toprule
+    Marcador & Definição & Unidade & Significado & 5 min & 30 s \\
+    \midrule
+    \multicolumn{6}{l}{\textit{Ectopia e pausas (pelo ritmo, sem distinguir a origem)}} \\
+    Batimentos precoces & RR menor que 80\,\% da mediana local & contagem & Batimentos fora do ritmo sinusal & \cellcolor{pior}não & sim \\
+    Extrassístoles & Precoce seguido de RR $>$ 115\,\% da mediana & contagem & Ectópico com pausa compensatória & \cellcolor{pior}não & sim \\
+    Dupletes & Dois intervalos precoces consecutivos & contagem & Ectopia repetitiva & \cellcolor{pior}não & sim \\
+    Carga de ectopia & Porcentagem de intervalos precoces & \% & Frequência global de ectopia & \cellcolor{pior}não & sim \\
+    Intervalos irregulares & Porcentagem de intervalos que não são NN & \% & Irregularidade do ritmo & sim$^{*}$ & sim \\
+    Maior pausa & Maior intervalo RR plausível & ms & Pausas e bradiarritmias & \cellcolor{pior}não & sim \\
+    Pausas acima de 2\,s & Intervalos RR maiores que 2\,000\,ms & contagem & Pausas prolongadas & \cellcolor{pior}não & sim \\
+    \midrule
+    \multicolumn{6}{l}{\textit{Morfologia (mediana dos batimentos delineados)}} \\
+    Duração do QRS & Do início ao fim do complexo QRS & ms & Condução ventricular & sim & sim \\
+    Intervalo QT & Do início do QRS ao fim da onda T & ms & Despolarização e repolarização & sim & sim \\
+    QTc & QT corrigido pela frequência (Bazett) & ms & Repolarização prolongada & sim & sim \\
+    Ondas P e T & Fração dos batimentos com cada onda & --- & Qualidade da delineação & \cellcolor{pior}não & sim \\
+    Amplitude & Percentil 99 do sinal, por derivação & mV & Massa ventricular e geometria & sim & sim \\
+    \bottomrule
+  \end{tabular}
+  \fonte{$^{*}$No protocolo A, proporção de intervalos afastados mais de
+    20\,\% da mediana. O protocolo A priorizou a variabilidade; o B, a ectopia.}
 \end{frame}
 
 % 12
