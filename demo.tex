@@ -46,6 +46,21 @@
 \setbeamercolor{progress bar}{fg=azulesc!45, bg=azulesc!12}
 \setbeamercolor{title separator}{fg=azulesc!45}
 \setbeamercolor{alerted text}{fg=azulesc}
+% divisor de secao: roteiro com a secao atual e suas subsecoes
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamerfont{section in toc}{size=\small}
+\setbeamerfont{subsection in toc}{size=\footnotesize}
+\AtBeginSection[]{
+  \begin{frame}{Roteiro}
+    \begin{columns}[T]
+      \column{0.5\textwidth}
+      \tableofcontents[currentsection,hideallsubsections]
+      \column{0.46\textwidth}
+      \vspace{0.6cm}
+      \tableofcontents[currentsection,sectionstyle=hide/hide,subsectionstyle=show/show/hide]
+    \end{columns}
+  \end{frame}
+}
 
 \title{Aprendizado de máquina para estratificação\\
   de risco de morte súbita cardíaca\\
@@ -63,12 +78,6 @@
 
 % 1
 \maketitle
-
-% 2
-\begin{frame}{Roteiro}
-  \setbeamertemplate{section in toc}[sections numbered]
-  \tableofcontents[hideallsubsections]
-\end{frame}
 
 % ==============================================================================
 \section{Introdução}
@@ -296,61 +305,27 @@
   \end{columns}
 \end{frame}
 
-% 11
-\begin{frame}{O que extraímos do ECG (1/2): ritmo e variabilidade}
+% extracao de caracteristicas (teoria)
+\begin{frame}{Do sinal aos marcadores: detecção do QRS e intervalos RR}
   \centering
-  \scriptsize
-  \setlength{\tabcolsep}{3pt}
-  \renewcommand{\arraystretch}{1.12}
-  \begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{0.9cm}>{\raggedright\arraybackslash}p{3.6cm}cc}
-    \toprule
-    Marcador & Definição & Unidade & Significado & 5 min & 30 s \\
-    \midrule
-    Frequência cardíaca média & 60\,000 dividido pela média dos intervalos NN & bpm & Nível de ativação do ritmo & sim & sim \\
-    Intervalo RR médio & Média dos intervalos NN & ms & Inverso da frequência & sim & sim \\
-    SDNN & Desvio-padrão dos intervalos NN & ms & Variabilidade total do segmento & sim & sim \\
-    RMSSD & Raiz da média dos quadrados das diferenças sucessivas & ms & Variação batimento a batimento; tônus vagal & sim & sim \\
-    pNN50 & Porcentagem de diferenças sucessivas maiores que 50\,ms & \% & Tônus vagal & sim & sim \\
-    SD1 e SD2 & Dispersões do gráfico de Poincaré & ms & Variabilidade de curto e de longo prazo & sim & sim \\
-    SD1/SD2 & Razão entre as duas dispersões & --- & Forma da nuvem de Poincaré & sim & sim \\
-    VLF, LF, HF, LF/HF & Potência espectral por faixa de frequência & u.a. & Modulação autonômica por mecanismo & sim & \cellcolor{pior}não \\
-    Entropia amostral & Regularidade da sequência de intervalos & --- & Complexidade do ritmo & sim & \cellcolor{pior}não \\
-    \bottomrule
-  \end{tabular}
-  \fonte{NN: intervalos entre batimentos normais. 5 min: protocolo A; 30 s:
-    protocolo B. Medidas espectrais e entropia exigem segmentos longos, por
-    isso não foram calculadas em 30 s. u.a.: unidades arbitrárias
-    (espectro normalizado pelo NeuroKit2 \cite{makowski2021neurokit2}).}
-\end{frame}
-
-\begin{frame}{O que extraímos do ECG (2/2): ectopia, pausas e morfologia}
-  \centering
-  \scriptsize
-  \setlength{\tabcolsep}{3pt}
-  \renewcommand{\arraystretch}{1.0}
-  \begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{1.1cm}>{\raggedright\arraybackslash}p{3.4cm}cc}
-    \toprule
-    Marcador & Definição & Unidade & Significado & 5 min & 30 s \\
-    \midrule
-    \multicolumn{6}{l}{\textit{Ectopia e pausas (pelo ritmo, sem distinguir a origem)}} \\
-    Batimentos precoces & RR menor que 80\,\% da mediana local & contagem & Batimentos fora do ritmo sinusal & \cellcolor{pior}não & sim \\
-    Extrassístoles & Precoce seguido de RR $>$ 115\,\% da mediana & contagem & Ectópico com pausa compensatória & \cellcolor{pior}não & sim \\
-    Dupletes & Dois intervalos precoces consecutivos & contagem & Ectopia repetitiva & \cellcolor{pior}não & sim \\
-    Carga de ectopia & Porcentagem de intervalos precoces & \% & Frequência global de ectopia & \cellcolor{pior}não & sim \\
-    Intervalos irregulares & Porcentagem de intervalos que não são NN & \% & Irregularidade do ritmo & sim$^{*}$ & sim \\
-    Maior pausa & Maior intervalo RR plausível & ms & Pausas e bradiarritmias & \cellcolor{pior}não & sim \\
-    Pausas acima de 2\,s & Intervalos RR maiores que 2\,000\,ms & contagem & Pausas prolongadas & \cellcolor{pior}não & sim \\
-    \midrule
-    \multicolumn{6}{l}{\textit{Morfologia (mediana dos batimentos delineados)}} \\
-    Duração do QRS & Do início ao fim do complexo QRS & ms & Condução ventricular & sim & sim \\
-    Intervalo QT & Do início do QRS ao fim da onda T & ms & Despolarização e repolarização & sim & sim \\
-    QTc & QT corrigido pela frequência (Bazett) & ms & Repolarização prolongada & sim & sim \\
-    Ondas P e T & Fração dos batimentos com cada onda & --- & Qualidade da delineação & \cellcolor{pior}não & sim \\
-    Amplitude & Percentil 99 do sinal, por derivação & mV & Massa ventricular e geometria & sim & sim \\
-    \bottomrule
-  \end{tabular}
-  \fonte{$^{*}$No protocolo A, proporção de intervalos afastados mais de
-    20\,\% da mediana. O protocolo A priorizou a variabilidade; o B, a ectopia.}
+  \begin{tikzpicture}[node distance=0.5cm]
+    \node[caixa, text width=2.7cm] (a) {ECG filtrado};
+    \node[caixa, text width=2.7cm, right=of a] (b) {Detecção do complexo QRS\\(pico R)};
+    \node[caixa, text width=2.7cm, right=of b] (c) {Intervalos RR\\(entre batimentos)};
+    \node[caixad, text width=2.7cm, right=of c] (d) {Intervalos NN\\(só batimentos normais)};
+    \draw[seta] (a) -- (b); \draw[seta] (b) -- (c); \draw[seta] (c) -- (d);
+  \end{tikzpicture}
+  \vspace{0.4cm}
+  \begin{itemize}
+    \small
+    \item \textbf{Variabilidade da frequência cardíaca}: como os intervalos NN
+      oscilam no tempo (SDNN, RMSSD, pNN50) e na frequência (VLF, LF, HF).
+    \item \textbf{Morfologia}: duração do QRS, intervalos QT e QTc, ondas P e T.
+    \item \textbf{Ectopia}: batimentos precoces, extrassístoles, dupletes e pausas.
+    \item Quanto mais longo o segmento, mais estáveis as medidas; os índices de
+      frequência exigem segmentos longos.
+  \end{itemize}
+  \fonte{A lista completa dos marcadores usados está na Metodologia (Cenário II).}
 \end{frame}
 
 % 12
@@ -486,6 +461,8 @@
 \section{Metodologia}
 % ==============================================================================
 
+\subsection{População de estudo}
+
 % 17
 \begin{frame}{A base MUSIC: 992 pacientes acompanhados por quatro anos}
   \begin{itemize}
@@ -592,6 +569,8 @@
   \end{columns}
 \end{frame}
 
+\subsection{Pré-processamento do sinal}
+
 % 20
 \begin{frame}{Do registro de 24 horas à entrada da rede}
   \centering
@@ -613,6 +592,8 @@
     \item A escala da normalização é calculada só com o treinamento.
   \end{itemize}
 \end{frame}
+
+\subsection{Cenário I: redes profundas}
 
 % 21
 \begin{frame}{Cenário I: redes de 14 mil a 16 milhões de parâmetros}
@@ -663,6 +644,8 @@
   \end{columns}
 \end{frame}
 
+\subsection{Cenário II: marcadores do ECG}
+
 % 23
 \begin{frame}{Cenário II: dois protocolos para extrair os marcadores}
   \centering
@@ -689,6 +672,65 @@
   \end{itemize}
 \end{frame}
 
+% 11
+\begin{frame}{O que extraímos do ECG (1/2): ritmo e variabilidade}
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}
+  \renewcommand{\arraystretch}{1.12}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{0.9cm}>{\raggedright\arraybackslash}p{3.6cm}cc}
+    \toprule
+    Marcador & Definição & Unidade & Significado & 5 min & 30 s \\
+    \midrule
+    Frequência cardíaca média & 60\,000 dividido pela média dos intervalos NN & bpm & Nível de ativação do ritmo & sim & sim \\
+    Intervalo RR médio & Média dos intervalos NN & ms & Inverso da frequência & sim & sim \\
+    SDNN & Desvio-padrão dos intervalos NN & ms & Variabilidade total do segmento & sim & sim \\
+    RMSSD & Raiz da média dos quadrados das diferenças sucessivas & ms & Variação batimento a batimento; tônus vagal & sim & sim \\
+    pNN50 & Porcentagem de diferenças sucessivas maiores que 50\,ms & \% & Tônus vagal & sim & sim \\
+    SD1 e SD2 & Dispersões do gráfico de Poincaré & ms & Variabilidade de curto e de longo prazo & sim & sim \\
+    SD1/SD2 & Razão entre as duas dispersões & --- & Forma da nuvem de Poincaré & sim & sim \\
+    VLF, LF, HF, LF/HF & Potência espectral por faixa de frequência & u.a. & Modulação autonômica por mecanismo & sim & \cellcolor{pior}não \\
+    Entropia amostral & Regularidade da sequência de intervalos & --- & Complexidade do ritmo & sim & \cellcolor{pior}não \\
+    \bottomrule
+  \end{tabular}
+  \fonte{NN: intervalos entre batimentos normais. 5 min: protocolo A; 30 s:
+    protocolo B. Medidas espectrais e entropia exigem segmentos longos, por
+    isso não foram calculadas em 30 s. u.a.: unidades arbitrárias
+    (espectro normalizado pelo NeuroKit2 \cite{makowski2021neurokit2}).}
+\end{frame}
+
+\begin{frame}{O que extraímos do ECG (2/2): ectopia, pausas e morfologia}
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}
+  \renewcommand{\arraystretch}{1.0}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{1.1cm}>{\raggedright\arraybackslash}p{3.4cm}cc}
+    \toprule
+    Marcador & Definição & Unidade & Significado & 5 min & 30 s \\
+    \midrule
+    \multicolumn{6}{l}{\textit{Ectopia e pausas (pelo ritmo, sem distinguir a origem)}} \\
+    Batimentos precoces & RR menor que 80\,\% da mediana local & contagem & Batimentos fora do ritmo sinusal & \cellcolor{pior}não & sim \\
+    Extrassístoles & Precoce seguido de RR $>$ 115\,\% da mediana & contagem & Ectópico com pausa compensatória & \cellcolor{pior}não & sim \\
+    Dupletes & Dois intervalos precoces consecutivos & contagem & Ectopia repetitiva & \cellcolor{pior}não & sim \\
+    Carga de ectopia & Porcentagem de intervalos precoces & \% & Frequência global de ectopia & \cellcolor{pior}não & sim \\
+    Intervalos irregulares & Porcentagem de intervalos que não são NN & \% & Irregularidade do ritmo & sim$^{*}$ & sim \\
+    Maior pausa & Maior intervalo RR plausível & ms & Pausas e bradiarritmias & \cellcolor{pior}não & sim \\
+    Pausas acima de 2\,s & Intervalos RR maiores que 2\,000\,ms & contagem & Pausas prolongadas & \cellcolor{pior}não & sim \\
+    \midrule
+    \multicolumn{6}{l}{\textit{Morfologia (mediana dos batimentos delineados)}} \\
+    Duração do QRS & Do início ao fim do complexo QRS & ms & Condução ventricular & sim & sim \\
+    Intervalo QT & Do início do QRS ao fim da onda T & ms & Despolarização e repolarização & sim & sim \\
+    QTc & QT corrigido pela frequência (Bazett) & ms & Repolarização prolongada & sim & sim \\
+    Ondas P e T & Fração dos batimentos com cada onda & --- & Qualidade da delineação & \cellcolor{pior}não & sim \\
+    Amplitude & Percentil 99 do sinal, por derivação & mV & Massa ventricular e geometria & sim & sim \\
+    \bottomrule
+  \end{tabular}
+  \fonte{$^{*}$No protocolo A, proporção de intervalos afastados mais de
+    20\,\% da mediana. O protocolo A priorizou a variabilidade; o B, a ectopia.}
+\end{frame}
+
+\subsection{Cenário III: variáveis clínicas}
+
 % 24
 \begin{frame}{Cenário III: as variáveis clínicas sozinhas e somadas ao ECG}
   \centering
@@ -709,6 +751,8 @@
       ou extrator congelado.
   \end{itemize}
 \end{frame}
+
+\subsection{Avaliação dos modelos}
 
 % 25
 \begin{frame}{Como avaliamos: cada paciente testado uma única vez}
@@ -748,6 +792,8 @@
 % ==============================================================================
 \section{Resultados}
 % ==============================================================================
+
+\subsection{Cenário I: redes profundas}
 
 % 26
 \begin{frame}{Cenário I: redes convolucionais não superaram o acaso}
@@ -893,6 +939,8 @@
 \end{frame}
 
 
+\subsection{Cenário II: marcadores do ECG}
+
 % 31
 \begin{frame}{Cenário II: segmentos de 5 minutos superam as redes}
   \centering
@@ -989,6 +1037,8 @@
   \msg{Dois marcadores ligados à frequência cardíaca: 0,085 acima da melhor rede.}
 \end{frame}
 
+\subsection{Cenário III: variáveis clínicas}
+
 % 34
 \begin{frame}{Cenário III: as variáveis clínicas superam todas as redes}
   \centering
@@ -1045,6 +1095,8 @@
     \end{block}
   \end{columns}
 \end{frame}
+
+\subsection{Comparação entre os cenários}
 
 % 36
 \begin{frame}{Os três cenários lado a lado}
