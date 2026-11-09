@@ -339,53 +339,77 @@
     \item \textbf{Agrupamento global} (média e máximo) e classificador.
     \item Perda: entropia cruzada ponderada, $w_{+} = N_0/N_1 \approx 8{,}4$.
   \end{itemize}
-  \vspace{0.1cm}
-  \centering
-  \resizebox{\linewidth}{!}{%
-  \begin{tikzpicture}[node distance=0.25cm,
-      b/.style={caixa, text width=1.55cm, minimum height=0.9cm}]
-    \node[b] (in) {Entrada\\$3 \times 24\,000$};
-    \node[b, right=of in, fill=boxcolor!40] (b1) {Bloco 1\\$16 \times 6\,000$};
-    \node[b, right=of b1, fill=boxcolor!40] (b2) {Bloco 2\\$32 \times 1\,500$};
-    \node[b, right=of b2, fill=boxcolor!40] (b3) {Bloco 3\\$64 \times 375$};
-    \node[b, right=of b3, fill=boxcolor!40] (b4) {Bloco 4\\$64 \times 93$};
-    \node[b, right=of b4, fill=destaque!15] (gp) {Agrup. global\\$128$};
-    \node[b, right=of gp, fill=verde!12] (cl) {Classif.\\prob. de MSC};
-    \foreach \a/\c in {in/b1,b1/b2,b2/b3,b3/b4,b4/gp,gp/cl} \draw[seta] (\a) -- (\c);
-  \end{tikzpicture}}
+  \fonte{A arquitetura completa, com as dimensões de cada bloco, está na Metodologia (Cenário I).}
 \end{frame}
 
 % 13
 \begin{frame}{Redes residuais: como treinar redes mais profundas}
-  \begin{columns}[T]
-    \column{0.5\textwidth}
-    \small
-    \begin{itemize}
-      \item Problema: redes muito profundas ficam difíceis de treinar.
-      \item \textbf{Aprendizado residual} \cite{he2016deep}: o bloco aprende
-        só a diferença $\mathcal{F}(\mathbf{x})$ e soma a entrada:
-        \equacao{\mathbf{y} = \mathrm{ReLU}\big(\mathcal{F}(\mathbf{x}) + \mathbf{x}\big)}
-      \item Atalho: identidade, ou projeção $1\times1$ quando muda a dimensão.
-      \item A cada estágio: comprimento $\div 2$, canais $\times 2$.
-    \end{itemize}
-    \column{0.46\textwidth}
-    \centering
-    \begin{tikzpicture}[node distance=0.12cm,
-        cv/.style={draw, rounded corners=1pt, fill=boxcolor!45, minimum width=3cm, font=\scriptsize},
-        bn/.style={draw, rounded corners=1pt, fill=verde!10, minimum width=3cm, font=\scriptsize}]
-      \node (x) {$\mathbf{x}$};
-      \node[cv, below=0.3cm of x] (c1) {Convolução, núcleo 3};
-      \node[bn, below=of c1] (n1) {Normalização + ReLU};
-      \node[cv, below=0.2cm of n1] (c2) {Convolução, núcleo 3};
-      \node[bn, below=of c2] (n2) {Normalização};
-      \node[draw, circle, inner sep=1pt, below=0.3cm of n2] (s) {$+$};
-      \node[below=0.25cm of s] (y) {$\mathbf{y}$ (após ReLU)};
-      \draw[seta] (x) -- (c1); \draw[seta] (n1) -- (c2);
-      \draw[seta] (n2) -- (s); \draw[seta] (s) -- (y);
-      \draw[seta, destaque] ([yshift=-0.1cm]x.south) -- ++(1.9,0) |- (s.east)
-        node[pos=0.25, right, font=\scriptsize, text=destaque] {atalho};
-    \end{tikzpicture}
-  \end{columns}
+  \small
+  \begin{itemize}
+    \item Problema: redes muito profundas ficam difíceis de treinar.
+    \item \textbf{Aprendizado residual} \cite{he2016deep}: o bloco aprende
+      só a diferença $\mathcal{F}(\mathbf{x})$ e soma a entrada:
+      \equacao{\mathbf{y} = \mathrm{ReLU}\big(\mathcal{F}(\mathbf{x}) + \mathbf{x}\big)}
+    \item Atalho: identidade, ou projeção $1\times1$ quando muda a dimensão.
+    \item Dois tipos de bloco neste trabalho: \textbf{básico} (duas convoluções)
+      e de \textbf{gargalo} (três convoluções, mais barato em redes profundas).
+    \item A cada estágio da rede: comprimento $\div 2$ e canais $\times 2$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Redes residuais: blocos básico e de gargalo}
+  \centering
+  \resizebox*{!}{6.2cm}{%
+\begin{tikzpicture}[
+        font=\footnotesize,
+        cv/.style={draw, rounded corners=2pt, fill=blue!8, minimum width=3.6cm, minimum height=0.55cm, align=center},
+        bn/.style={draw, rounded corners=2pt, fill=green!8, minimum width=3.6cm, minimum height=0.45cm},
+        re/.style={draw, rounded corners=2pt, fill=orange!12, minimum width=3.6cm, minimum height=0.45cm},
+        soma/.style={draw, circle, inner sep=1pt, font=\normalsize},
+        seta/.style={-{Stealth[length=2mm]}, thick},
+        node distance=0.12cm
+      ]
+      % ---- (a) bloco basico ----
+      \node[font=\small\bfseries] (ta) {(a) Bloco básico ($E = 1$)};
+      \node[below=0.35cm of ta] (xa) {$\mathbf{x}$};
+      \node[cv, below=0.35cm of xa] (a1) {Convolução, núcleo 3};
+      \node[bn, below=of a1] (a2) {Normalização em lote};
+      \node[re, below=of a2] (a3) {ReLU};
+      \node[cv, below=0.3cm of a3] (a4) {Convolução, núcleo 3};
+      \node[bn, below=of a4] (a5) {Normalização em lote};
+      \node[soma, below=0.4cm of a5] (sa) {$+$};
+      \node[re, below=0.3cm of sa] (a6) {ReLU};
+      \node[below=0.3cm of a6] (ya) {$\mathbf{y}$};
+      \draw[seta] (xa) -- (a1);
+      \draw[seta] (a3) -- (a4);
+      \draw[seta] (a5) -- (sa);
+      \draw[seta] (sa) -- (a6);
+      \draw[seta] (a6) -- (ya);
+      \draw[seta] ([yshift=-0.12cm]xa.south) -- ++(2.35,0) |- (sa.east)
+      node[pos=0.25, right, align=left, font=\scriptsize] {atalho:\\identidade ou\\projeção 1\,$\times$\,1};
+      % ---- (b) bloco de gargalo ----
+      \node[font=\small\bfseries, right=4.6cm of ta] (tb) {(b) Bloco de gargalo ($E = 4$)};
+      \node[below=0.35cm of tb] (xb) {$\mathbf{x}$};
+      \node[cv, below=0.35cm of xb] (b1) {Convolução, núcleo 1\\(reduz canais)};
+      \node[bn, below=of b1] (b2) {Normalização em lote};
+      \node[re, below=of b2] (b3) {ReLU};
+      \node[cv, below=0.25cm of b3] (b4) {Convolução, núcleo 3};
+      \node[bn, below=of b4] (b5) {Normalização em lote};
+      \node[re, below=of b5] (b6) {ReLU};
+      \node[cv, below=0.25cm of b6] (b7) {Convolução, núcleo 1\\(expande canais $\times 4$)};
+      \node[bn, below=of b7] (b8) {Normalização em lote};
+      \node[soma, below=0.3cm of b8] (sb) {$+$};
+      \node[re, below=0.25cm of sb] (b9) {ReLU};
+      \node[below=0.25cm of b9] (yb) {$\mathbf{y}$};
+      \draw[seta] (xb) -- (b1);
+      \draw[seta] (b3) -- (b4);
+      \draw[seta] (b6) -- (b7);
+      \draw[seta] (b8) -- (sb);
+      \draw[seta] (sb) -- (b9);
+      \draw[seta] (b9) -- (yb);
+      \draw[seta] ([yshift=-0.12cm]xb.south) -- ++(2.35,0) |- (sb.east)
+      node[pos=0.25, right, align=left, font=\scriptsize] {atalho:\\identidade ou\\projeção 1\,$\times$\,1};
+    \end{tikzpicture}}
 \end{frame}
 
 % 14
@@ -617,6 +641,104 @@
     \bottomrule
   \end{tabular}
   \fonte{Capacidade variando em mais de mil vezes: se o desempenho não acompanhar, a limitação está nos dados, e não na rede.}
+\end{frame}
+
+% arquitetura da CNN (mesma figura da dissertacao)
+\begin{frame}{Cenário I: arquitetura da rede convolucional}
+  \centering
+  \resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+        font=\footnotesize,
+        caixa/.style={draw, rounded corners=2pt, align=center, minimum height=1.05cm, inner sep=3pt},
+        conv/.style={caixa, fill=blue!8, text width=2.05cm},
+        pool/.style={caixa, fill=orange!12, text width=2.3cm},
+        clf/.style={caixa, fill=green!8, text width=2.3cm},
+        io/.style={caixa, fill=gray!10, text width=1.75cm},
+        det/.style={draw, rounded corners=1pt, fill=blue!4, minimum width=3.3cm, minimum height=0.5cm, font=\scriptsize},
+        seta/.style={-{Stealth[length=2.2mm]}, thick},
+        node distance=0.32cm
+      ]
+      % fluxo principal
+      \node[io] (in) {\textbf{Entrada}\\ECG X, Y, Z\\$[3 \times 24\,000]$};
+      \node[conv, right=of in] (b1) {\textbf{BlocoConv 1}\\16 canais\\$[16 \times 6\,000]$};
+      \node[conv, right=of b1] (b2) {\textbf{BlocoConv 2}\\32 canais\\$[32 \times 1\,500]$};
+      \node[conv, right=of b2] (b3) {\textbf{BlocoConv 3}\\64 canais\\$[64 \times 375]$};
+      \node[conv, right=of b3] (b4) {\textbf{BlocoConv 4}\\64 canais\\$[64 \times 93]$};
+      \node[pool, below=0.75cm of b4, text width=2.5cm] (gp) {\textbf{Agrupamento global}\\média e máximo: $[128]$};
+      \node[clf, below=0.75cm of b3, text width=2.05cm] (cl) {\textbf{Classificador}\\$128 \rightarrow 64 \rightarrow 1$};
+      \node[io, below=0.75cm of b2, text width=2.05cm] (out) {\textbf{Sigmoide}\\probabilidade de MSC};
+      \draw[seta] (in) -- (b1);
+      \draw[seta] (b1) -- (b2);
+      \draw[seta] (b2) -- (b3);
+      \draw[seta] (b3) -- (b4);
+      \draw[seta] (b4) -- (gp);
+      \draw[seta] (gp) -- (cl);
+      \draw[seta] (cl) -- (out);
+      % chave do extrator
+      \draw[decorate, decoration={brace, amplitude=5pt, raise=3pt}, thick, gray]
+      (b1.north west) -- (b4.north east) node[midway, above=9pt, gray!80!black]
+      {\textbf{Extrator de características}: cada bloco reduz o comprimento em 4 vezes};
+      % detalhe de um bloco e do classificador
+      \node[draw, dashed, gray!80!black, rounded corners=2pt, fill=blue!3, align=left,
+        font=\scriptsize, anchor=north west, text width=13.6cm, inner sep=4pt]
+      (det) at ([yshift=-0.35cm]gp.south -| in.west)
+      {\textbf{Cada BlocoConv:} convolução 1D (núcleo de 15 amostras, 75\,ms) $\rightarrow$
+        normalização em lote $\rightarrow$ ReLU $\rightarrow$ agrupamento máximo (fator 4)
+        $\rightarrow$ descarte (0,1).\\
+        \textbf{Classificador:} descarte (0,5) $\rightarrow$ linear (128 $\rightarrow$ 64)
+        $\rightarrow$ normalização em lote $\rightarrow$ ReLU $\rightarrow$ descarte (0,5)
+        $\rightarrow$ linear (64 $\rightarrow$ 1).};
+    \end{tikzpicture}}
+  \fonte{\raggedright Variante simples, janela de 2 minutos (24\,000 amostras a 200 Hz). O agrupamento global concatena a média e o máximo de cada canal; só depois dele atua o classificador.\par}
+\end{frame}
+
+% arquitetura da ResNet-18 (mesma figura da dissertacao)
+\begin{frame}{Cenário I: arquitetura da ResNet-18}
+  \centering
+  \resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+        font=\footnotesize,
+        caixa/.style={draw, rounded corners=2pt, align=center, minimum height=1.05cm, inner sep=3pt},
+        est/.style={caixa, fill=blue!8, text width=2.05cm},
+        ini/.style={caixa, fill=blue!15, text width=2.05cm},
+        pool/.style={caixa, fill=orange!12, text width=2.5cm},
+        clf/.style={caixa, fill=green!8, text width=2.05cm},
+        io/.style={caixa, fill=gray!10, text width=1.75cm},
+        seta/.style={-{Stealth[length=2.2mm]}, thick},
+        node distance=0.28cm
+      ]
+      \node[io] (in) {\textbf{Entrada}\\ECG X, Y, Z\\$[3 \times 24\,000]$};
+      \node[ini, right=of in] (st) {\textbf{Etapa inicial}\\conv. 7, passo 2\\agrup. máx. 3, passo 2\\$[64 \times 6\,000]$};
+      \node[est, right=of st] (e1) {\textbf{Estágio 1}\\2 blocos básicos\\$[64 \times 6\,000]$};
+      \node[est, right=of e1] (e2) {\textbf{Estágio 2}\\2 blocos, passo 2\\$[128 \times 3\,000]$};
+      \node[est, right=of e2] (e3) {\textbf{Estágio 3}\\2 blocos, passo 2\\$[256 \times 1\,500]$};
+      \node[est, below=0.75cm of e3] (e4) {\textbf{Estágio 4}\\2 blocos, passo 2\\$[512 \times 750]$};
+      \node[pool, left=0.45cm of e4] (gp) {\textbf{Agrupamento global}\\média e máximo: $[1\,024]$};
+      \node[clf, left=0.45cm of gp] (cl) {\textbf{Classificador}\\$1\,024 \rightarrow 64 \rightarrow 1$};
+      \node[io, left=0.45cm of cl, text width=2.05cm] (out) {\textbf{Sigmoide}\\probabilidade de MSC};
+      \draw[seta] (in) -- (st);
+      \draw[seta] (st) -- (e1);
+      \draw[seta] (e1) -- (e2);
+      \draw[seta] (e2) -- (e3);
+      \draw[seta] (e3) -- (e4);
+      \draw[seta] (e4) -- (gp);
+      \draw[seta] (gp) -- (cl);
+      \draw[seta] (cl) -- (out);
+      \draw[decorate, decoration={brace, amplitude=5pt, raise=3pt}, thick, gray]
+      (e1.north west) -- (e3.north east) node[midway, above=9pt, gray!80!black, align=center]
+      {\textbf{Blocos residuais}: a cada estágio,\\comprimento $\div 2$ e canais $\times 2$};
+      \node[draw, dashed, gray!80!black, rounded corners=2pt, fill=blue!3, align=left,
+        font=\scriptsize, anchor=north west, text width=14.6cm, inner sep=4pt]
+      at ([yshift=-0.35cm]e4.south -| in.west)
+      {\textbf{Cada estágio:} dois blocos básicos (convolução 3 $\rightarrow$ normalização
+        $\rightarrow$ ReLU $\rightarrow$ convolução 3 $\rightarrow$ normalização, somados ao
+        atalho e seguidos de ReLU); no primeiro bloco dos estágios 2 a 4, passo 2 e
+        atalho com projeção.\\
+        \textbf{Classificador:} descarte (0,5) $\rightarrow$ linear (1\,024 $\rightarrow$ 64)
+        $\rightarrow$ normalização em lote $\rightarrow$ ReLU $\rightarrow$ descarte (0,5)
+        $\rightarrow$ linear (64 $\rightarrow$ 1).};
+    \end{tikzpicture}}
+  \fonte{\raggedright ResNet-18 completa ($P = 64$), janela de 2 minutos. As demais variam blocos por estágio, $P$ ou tipo de bloco.\par}
 \end{frame}
 
 % 22
@@ -986,7 +1108,7 @@
       \end{tabular}
       \vspace{0.1cm}\\
       Contar segmentos como pacientes infla a significância
-      (pseudorreplicação \cite{hurlbert1984pseudoreplication}).
+      (pseudorreplicação; \citeonline{hurlbert1984pseudoreplication}).
     \end{block}
     \column{0.51\textwidth}
     \begin{block}{Modelos}
@@ -1126,6 +1248,7 @@
       \bottomrule
     \end{tabular}
   \end{columns}
+  \fonte{As curvas mostram os melhores modelos cujas predições foram salvas; a tabela traz os melhores valores de cada cenário.}
 \end{frame}
 
 % ==============================================================================
