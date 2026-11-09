@@ -108,13 +108,16 @@
 % 4
 \begin{frame}{O que queremos prever?}
   \begin{columns}[c]
-    \column{0.55\textwidth}
-    \begin{block}{A probabilidade de MSC em quatro anos}
+    \column{0.58\textwidth}
+    \small
+    \begin{block}{Classificar quem terá MSC em 4 anos (sim ou não)}
       \begin{itemize}
-        \item Para cada paciente, um \textbf{risco individual}, e não um sim
-          ou não por limiar.
-        \item Permite ordenar os pacientes e concentrar a prevenção em quem
-          mais precisa.
+        \item O modelo estima uma \textbf{probabilidade} de MSC para cada
+          paciente.
+        \item A \textbf{AUC} avalia essa probabilidade: os casos recebem
+          risco maior que os controles?
+        \item Um \textbf{limiar} transforma a probabilidade em sim ou não,
+          para calcular sensibilidade e especificidade.
       \end{itemize}
     \end{block}
     \begin{block}{A partir do Holter de 24 horas}
@@ -124,14 +127,16 @@
           e vigília.
       \end{itemize}
     \end{block}
-    \column{0.42\textwidth}
+    \column{0.39\textwidth}
     \centering
     \begin{tikzpicture}[node distance=0.35cm]
       \node[caixa, text width=3.6cm] (h) {Holter de 24 h\\3 derivações, 200 Hz};
       \node[caixad, text width=3.6cm, below=of h] (m) {Modelo de\\aprendizado de máquina};
       \node[caixav, text width=3.6cm, below=of m] (p) {Probabilidade de MSC\\em 4 anos};
+      \node[caixa, text width=3.6cm, below=of p] (c) {Limiar $\rightarrow$\\\textbf{sim} ou \textbf{não}};
       \draw[seta] (h) -- (m);
       \draw[seta] (m) -- (p);
+      \draw[seta] (p) -- (c);
     \end{tikzpicture}
   \end{columns}
 \end{frame}
