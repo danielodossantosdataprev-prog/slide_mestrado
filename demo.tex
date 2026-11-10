@@ -1164,24 +1164,38 @@
 \subsection{Cenário III: variáveis clínicas}
 
 % 34
-\begin{frame}{Cenário III: as variáveis clínicas superam todas as redes}
-  \centering
-  \footnotesize
-  \begin{tabular}{lc}
-    \toprule
-    Modelo (logística L2) & AUC geral [IC 95\,\%] \\
-    \midrule
-    Seis variáveis clínicas & 0,661 [0,577--0,741] \\
-    Ecocardiograma & 0,714 [0,641--0,774] \\
-    Clínicas + ecocardiograma & 0,720 [0,640--0,789] \\
-    Clínicas + todos os exames & \textbf{0,733} [0,656--0,804] \\
-    Todos os exames & 0,738 [0,666--0,809] \\
-    \bottomrule
-  \end{tabular}
-  \vspace{0.3cm}
+\begin{frame}{Cenário III: resultados das variáveis clínicas}
+  \begin{columns}[T]
+    \column{0.46\textwidth}
+    \centering
+    \footnotesize
+    \begin{tabular}{lc}
+      \toprule
+      Modelo (logística L2) & AUC geral [IC 95\,\%] \\
+      \midrule
+      Seis variáveis clínicas & 0,661 [0,577--0,741] \\
+      Ecocardiograma & 0,714 [0,641--0,774] \\
+      Clínicas + ecocardiograma & 0,720 [0,640--0,789] \\
+      Clínicas + todos os exames & \textbf{0,733} [0,656--0,804] \\
+      Todos os exames & 0,738 [0,666--0,809] \\
+      \bottomrule
+    \end{tabular}
+    \column{0.52\textwidth}
+    \begin{block}{Ecocardiograma e radiografia}
+      \footnotesize
+      \begin{itemize}
+        \item FEVE (fração de ejeção do ventrículo esquerdo)
+        \item Tamanho do átrio esquerdo
+        \item Diâmetros diastólico e sistólico do ventrículo esquerdo
+        \item Espessuras do septo e da parede posterior
+        \item Diâmetro e contratilidade do ventrículo direito
+        \item Índice cardiotorácico (radiografia)
+      \end{itemize}
+    \end{block}
+  \end{columns}
+  \vspace{0.2cm}
   \begin{itemize}
     \small
-    \item As variáveis clínicas superam todas as redes do Cenário I.
     \item O ecocardiograma foi o grupo de exames mais informativo
       ($+0{,}058$ sobre as clínicas).
     \item Pro-BNP: $+0{,}047$; laudo do ECG e medidas do Holter acrescentaram pouco.
