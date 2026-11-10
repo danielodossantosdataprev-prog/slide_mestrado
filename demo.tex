@@ -1192,34 +1192,33 @@
 \begin{frame}{Cenário III: somar o ECG às clínicas ajuda pouco}
   \centering
   \scriptsize
-  \setlength{\tabcolsep}{3pt}
-  \begin{tabular}{lrcccrr}
+  \setlength{\tabcolsep}{2.6pt}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{llrcccrr}
     \toprule
-    Modelo & Var. & AUC geral [IC 95\,\%] & AUC por partição & AUPRC & Sens. & Espec. \\
+    Entrada & Modelo & Var. & AUC geral [IC 95\,\%] & AUC por partição & AUPRC & Sens. & Espec. \\
     \midrule
-    \multicolumn{7}{l}{\textit{Referências: só clínicas e só ECG}} \\
-    Só clínicas & 6 & 0,661 [0,577--0,741] & 0,673 $\pm$ 0,114 & 0,233 & 0,564 & 0,699 \\
-    Só ECG: marcadores (A), PCA (4) + logística & 44 & 0,624 [0,535--0,708] & 0,623 $\pm$ 0,052 & 0,232 & 0,345 & 0,868 \\
+    Clínicas & Logística L2 & 6 & 0,661 [0,577--0,741] & 0,673 $\pm$ 0,114 & 0,233 & 0,564 & 0,699 \\
+    ECG (protocolo A) & PCA (4) + logística & 44 & 0,624 [0,535--0,708] & 0,623 $\pm$ 0,052 & 0,232 & 0,345 & 0,868 \\
     \midrule
-    \multicolumn{7}{l}{\textit{Clínicas + marcadores do ECG (protocolo A)}} \\
-    Clínicas + 44 marcadores, L2 & 50 & 0,672 [0,597--0,745] & 0,679 $\pm$ 0,099 & 0,201 & 0,582 & 0,662 \\
-    \textbf{Clínicas + 44 marcadores, L1} & 50 & \textbf{0,681} [0,604--0,756] & 0,690 $\pm$ 0,065 & 0,191 & 0,527 & 0,771 \\
-    Clínicas + 4 marcadores escolhidos$^{a}$ & 10 & 0,684 [0,601--0,762] & 0,696 $\pm$ 0,083 & 0,220 & 0,582 & 0,755 \\
-    Clínicas + 2 marcadores escolhidos$^{a}$ & 8 & 0,689 [0,607--0,769] & 0,700 $\pm$ 0,087 & 0,251 & 0,636 & 0,714 \\
-    Clínicas + 6 variáveis, seleção na partição$^{b}$ & 6 & 0,640 [0,552--0,726] & 0,644 $\pm$ 0,068 & 0,185 & 0,527 & 0,734 \\
+    Clínicas + ECG & Logística L2 & 50 & 0,672 [0,597--0,745] & 0,679 $\pm$ 0,099 & 0,201 & 0,582 & 0,662 \\
+    \textbf{Clínicas + ECG} & \textbf{Logística L1} & 50 & \textbf{0,681} [0,604--0,756] & 0,690 $\pm$ 0,065 & 0,191 & 0,527 & 0,771 \\
+    Clínicas + ECG (4 marcadores) & Logística L2, escolha na coorte & 10 & 0,684 [0,601--0,762] & 0,696 $\pm$ 0,083 & 0,220 & 0,582 & 0,755 \\
+    Clínicas + ECG (2 marcadores) & Logística L2, escolha na coorte & 8 & 0,689 [0,607--0,769] & 0,700 $\pm$ 0,087 & 0,251 & 0,636 & 0,714 \\
+    Clínicas + ECG & Logística L2, escolha na partição & 6 & 0,640 [0,552--0,726] & 0,644 $\pm$ 0,068 & 0,185 & 0,527 & 0,734 \\
     \midrule
-    \multicolumn{7}{l}{\textit{Clínicas + sinal bruto (rede com concatenação, ResNet-18)}} \\
-    Treinamento conjunto & 6 + sinal & 0,516 [0,433--0,603] & 0,534 $\pm$ 0,090 & 0,141 & 0,418 & 0,548 \\
-    Taxa reduzida no extrator & 6 + sinal & 0,579 [0,492--0,669] & 0,578 $\pm$ 0,046 & 0,180 & 0,455 & 0,673 \\
-    Extrator congelado & 6 + sinal & 0,577 [0,491--0,659] & 0,572 $\pm$ 0,043 & 0,146 & 0,727 & 0,424 \\
+    Clínicas + sinal bruto & Rede concatenada, treino conjunto & 6 + sinal & 0,516 [0,433--0,603] & 0,534 $\pm$ 0,090 & 0,141 & 0,418 & 0,548 \\
+    Clínicas + sinal bruto & Rede concatenada, taxa reduzida & 6 + sinal & 0,579 [0,492--0,669] & 0,578 $\pm$ 0,046 & 0,180 & 0,455 & 0,673 \\
+    Clínicas + sinal bruto & Rede concatenada, extrator congelado & 6 + sinal & 0,577 [0,491--0,659] & 0,572 $\pm$ 0,043 & 0,146 & 0,727 & 0,424 \\
     \bottomrule
-  \end{tabular}
+  \end{tabular}}
+  \vspace{0.15cm}
   \begin{itemize}
     \scriptsize
-    \item \textbf{Marcadores + clínicas:} ganho pequeno, \textbf{sem significância} estatística. Protocolo B, 2 marcadores pré-especificados + clínicas: AUC 0,679 a 0,683.
-    \item \textbf{Sinal bruto + clínicas:} pior que as clínicas sozinhas.
+    \item \textbf{Rede concatenada:} ResNet-18 sobre o sinal + ramo com as 6 clínicas. \textbf{Treino conjunto:} a rede inteira aprende com a mesma taxa ($10^{-4}$).
+    \item \textbf{Taxa reduzida:} o ramo do sinal aprende com taxa bem menor ($10^{-6}$); o resto, com $10^{-4}$.
+    \item \textbf{Extrator congelado:} o ramo do sinal fica fixo; só o ramo clínico e o classificador são ajustados.
   \end{itemize}
-  \fonte{$^{a}$ Escolhidos olhando a coorte inteira (otimista). $^{b}$ Seis variáveis escolhidas em cada partição, entre clínicas e marcadores.}
 \end{frame}
 
 \subsection{Comparação entre os cenários}
