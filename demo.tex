@@ -1066,28 +1066,35 @@
 % 31
 \begin{frame}{Cenário II: segmentos de 5 minutos superam as redes}
   \centering
-  \footnotesize
-  \begin{tabular}{lrcc}
+  \scriptsize
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{lrcccrr}
     \toprule
-    Modelo & Variáveis & AUC geral [IC 95\,\%] & AUPRC \\
+    Modelo & Var. & AUC geral [IC 95\,\%] & AUC por partição & AUPRC & Sens. & Espec. \\
     \midrule
-    Clínicas (referência) & 6 & 0,661 [0,577--0,741] & 0,233 \\
+    Clínicas (referência) & 6 & 0,661 [0,577--0,741] & 0,673 $\pm$ 0,114 & 0,233 & 0,564 & 0,699 \\
     \midrule
-    Marcadores, logística L2 & 44 & 0,589 [0,507--0,671] & 0,180 \\
-    Marcadores, logística L1 & 44 & 0,585 [0,503--0,666] & 0,163 \\
-    \textbf{Marcadores, PCA (4) + logística} & 44 & \textbf{0,624} [0,535--0,708] & 0,232 \\
-    Marcadores, floresta aleatória & 44 & 0,621 [0,537--0,701] & 0,184 \\
+    Marcadores, logística L2 & 44 & 0,589 [0,507--0,671] & 0,595 $\pm$ 0,066 & 0,180 & 0,418 & 0,714 \\
+    Marcadores, logística L1 & 44 & 0,585 [0,503--0,666] & 0,588 $\pm$ 0,044 & 0,163 & 0,400 & 0,706 \\
+    \textbf{Marcadores, PCA (4) + logística} & 44 & \textbf{0,624} [0,535--0,708] & 0,623 $\pm$ 0,052 & 0,232 & 0,345 & 0,868 \\
+    Marcadores, floresta aleatória & 44 & 0,621 [0,537--0,701] & 0,627 $\pm$ 0,025 & 0,184 & 0,400 & 0,801 \\
+    \midrule
+    Clínicas + marcadores, L2 & 50 & 0,672 [0,597--0,745] & 0,679 $\pm$ 0,099 & 0,201 & 0,582 & 0,662 \\
+    Clínicas + marcadores, L1 & 50 & \textbf{0,681} [0,604--0,756] & 0,690 $\pm$ 0,065 & 0,191 & 0,527 & 0,771 \\
     \bottomrule
   \end{tabular}
-  \vspace{0.3cm}
+  \vspace{0.2cm}
   \begin{itemize}
-    \small
+    \footnotesize
     \item Três marcadores resistiram à correção de Benjamini-Hochberg: média e
       desvio-padrão da potência HF e \textbf{desvio-padrão da frequência
       cardíaca}.
     \item Escolher poucos marcadores olhando toda a coorte dá cerca de 0,05 a
       mais (otimismo); dentro da partição, 0,580.
+    \item As duas últimas linhas já combinam clínicas e ECG (Cenário III), e
+      ficam aqui para comparação.
   \end{itemize}
+  \fonte{Sensibilidade e especificidade no limiar de cada modelo. AUPRC do acaso: 0,106.}
 \end{frame}
 
 % 32
