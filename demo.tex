@@ -1094,6 +1094,44 @@
   \fonte{Sensibilidade e especificidade no limiar de cada modelo. AUPRC do acaso: 0,106.}
 \end{frame}
 
+% fluxo 44 -> 2
+\begin{frame}{Cenário II: de 44 marcadores a 4 e a 2}
+  \centering
+  \begin{tikzpicture}[node distance=0.55cm, every node/.style={font=\footnotesize},
+      cx/.style={draw=destaque, fill=boxcolor!60, rounded corners=2pt, minimum width=1.9cm, minimum height=0.9cm, align=center},
+      sd/.style={font=\scriptsize, text=cinza, align=center, text width=2.5cm},
+      >={Stealth[length=2mm]}]
+    \node[cx] (a) {\textbf{44}\\marcadores};
+    \node[cx, right=of a] (b) {\textbf{8}\\$p<0{,}05$};
+    \node[cx, right=of b] (c) {\textbf{4}\\escolhidos};
+    \node[cx, right=of c, fill=melhor] (d) {\textbf{2}\\principais};
+    \draw[->] (a) -- (b); \draw[->] (b) -- (c); \draw[->] (c) -- (d);
+    \node[sd, below=0.15cm of b] {Mann-Whitney\\(44 testes: ${\sim}2$ por acaso)};
+    \node[sd, below=0.15cm of c] {fisiologia e\\baixa redundância};
+    \node[sd, below=0.15cm of d] {HF (média) e\\DP da freq. cardíaca};
+  \end{tikzpicture}
+  \vspace{0.3cm}
+  \begin{columns}[T]
+    \column{0.47\textwidth}
+    \begin{block}{Correção de comparações múltiplas}
+      \footnotesize
+      \begin{itemize}
+        \item \textbf{3} resistem ao Benjamini-Hochberg: média e DP da HF, DP da frequência cardíaca;
+        \item \textbf{2} resistem ao Bonferroni: DP da HF e DP da frequência cardíaca.
+      \end{itemize}
+    \end{block}
+    \column{0.51\textwidth}
+    \begin{block}{Por que 4 e 2, e não 8, 3 ou 2 da correção}
+      \footnotesize
+      \begin{itemize}
+        \item Saíram 4 dos 8 por redundância ou por depender dos eletrodos: DP da HF e LF/HF, DP da entropia e amplitude da derivação Y.
+        \item Os 4 ficam compatíveis com a regra de dez eventos por variável.
+      \end{itemize}
+    \end{block}
+  \end{columns}
+  \fonte{A escolha usou o desfecho de toda a coorte: por isso é otimista (slide seguinte). No protocolo B (30 s), os 2 marcadores vêm da literatura, sem teste na coorte.}
+\end{frame}
+
 \begin{frame}{Cenário II (2/2): poucos marcadores e o otimismo da seleção}
   \centering
   \scriptsize
@@ -1160,6 +1198,78 @@
       \end{itemize}
     \end{block}
   \end{columns}
+\end{frame}
+
+% protocolo B: tabelas
+\begin{frame}{Cenário II, protocolo B (1/2): resumos por paciente de 30 s}
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{0.82}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{llrcccrr}
+    \toprule
+    Conjunto de variáveis & Modelo & Var. & AUC geral [IC 95\,\%] & AUC por partição & AUPRC & Sens. & Espec. \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Conjunto 1: valor típico (mediana ou média)}} \\
+    1 & Logística L2 & 32 & 0,552 [0,461--0,641] & 0,556 $\pm$ 0,103 & 0,168 & 0,345 & 0,719 \\
+    1 & Logística L1 & 32 & 0,550 [0,457--0,637] & 0,555 $\pm$ 0,094 & 0,172 & 0,364 & 0,740 \\
+    1 & PCA (4) + logística & 32 & 0,563 [0,477--0,646] & 0,568 $\pm$ 0,079 & 0,190 & 0,327 & 0,818 \\
+    1 & Floresta aleatória & 32 & 0,532 [0,439--0,621] & 0,541 $\pm$ 0,093 & 0,196 & 0,291 & 0,808 \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Conjunto 2: 1 + intervalo interquartil + fração de segmentos com evento}} \\
+    2 & Logística L2 & 64 & 0,540 [0,447--0,626] & 0,542 $\pm$ 0,118 & 0,196 & 0,436 & 0,652 \\
+    2 & Logística L1 & 64 & 0,548 [0,456--0,638] & 0,555 $\pm$ 0,081 & 0,185 & 0,364 & 0,715 \\
+    \textbf{2} & \textbf{PCA (4) + logística} & 64 & \textbf{0,619} [0,537--0,700] & 0,623 $\pm$ 0,045 & 0,226 & 0,527 & 0,636 \\
+    2 & Floresta aleatória & 64 & 0,562 [0,469--0,652] & 0,569 $\pm$ 0,074 & 0,207 & 0,255 & 0,864 \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Conjunto 3: todos os resumos (inclui percentis 10 e 90)}} \\
+    3 & Logística L2 & 122 & 0,545 [0,452--0,633] & 0,543 $\pm$ 0,131 & 0,186 & 0,382 & 0,695 \\
+    3 & Logística L1 & 122 & 0,550 [0,461--0,638] & 0,558 $\pm$ 0,085 & 0,195 & 0,400 & 0,684 \\
+    3 & PCA (4) + logística & 122 & 0,548 [0,461--0,635] & 0,559 $\pm$ 0,123 & 0,193 & 0,436 & 0,688 \\
+    3 & Floresta aleatória & 122 & 0,582 [0,495--0,671] & 0,593 $\pm$ 0,090 & 0,233 & 0,200 & 0,907 \\
+    \bottomrule
+  \end{tabular}}
+  \vspace{0.05cm}
+  \begin{itemize}
+    \scriptsize
+    \item \textbf{11 das 12} têm IC que inclui 0,5; a exceção é a melhor de doze. Clínicas: 0,661.
+  \end{itemize}
+  \fonte{Sensibilidade e especificidade: média das cinco partições. AUPRC do acaso: 0,106. Treinados sobre cada segmento (0,53 a 0,56, todos com IC incluindo 0,5): logística L2 0,563; PCA (6) 0,532; floresta 0,564; \textit{gradient boosting} 0,549.}
+\end{frame}
+
+\begin{frame}{Cenário II, protocolo B (2/2): dois marcadores pré-especificados}
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{0.92}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{llrccc}
+    \toprule
+    Entrada & Derivação & Var. & AUC geral [IC 95\,\%] & AUC por partição & Ganho sobre as clínicas [IC 95\,\%] \\
+    \midrule
+    Clínicas (referência) & --- & 6 & 0,661 [0,580--0,743] & 0,673 $\pm$ 0,102 & --- \\
+    \midrule
+    \multicolumn{6}{l}{\textit{2 marcadores: DP da freq. cardíaca + carga de ectopia}} \\
+    2 marcadores & X & 2 & 0,660 [0,572--0,745] & 0,674 $\pm$ 0,006 & $-0{,}005$ [$-0{,}094$; $+0{,}083$] \\
+    2 marcadores & Y & 2 & 0,635 [0,559--0,711] & 0,643 $\pm$ 0,083 & $-0{,}030$ [$-0{,}129$; $+0{,}071$] \\
+    2 marcadores & Z & 2 & 0,653 [0,567--0,728] & 0,668 $\pm$ 0,056 & $-0{,}013$ [$-0{,}112$; $+0{,}081$] \\
+    \textbf{2 marcadores} & \textbf{melhor qualidade} & 2 & \textbf{0,647} [0,563--0,726] & 0,656 $\pm$ 0,064 & $-0{,}019$ [$-0{,}113$; $+0{,}077$] \\
+    \midrule
+    Clínicas + 2 marcadores & X & 8 & 0,683 [0,601--0,763] & 0,689 $\pm$ 0,086 & $+0{,}017$ [$-0{,}026$; $+0{,}056$] \\
+    Clínicas + 2 marcadores & Y & 8 & 0,682 [0,600--0,756] & 0,690 $\pm$ 0,045 & $+0{,}016$ [$-0{,}027$; $+0{,}055$] \\
+    Clínicas + 2 marcadores & Z & 8 & 0,682 [0,602--0,761] & 0,689 $\pm$ 0,078 & $+0{,}017$ [$-0{,}033$; $+0{,}060$] \\
+    Clínicas + 2 marcadores & melhor qualidade & 8 & 0,679 [0,599--0,757] & 0,685 $\pm$ 0,069 & $+0{,}014$ [$-0{,}029$; $+0{,}051$] \\
+    \midrule
+    4 marcadores & melhor qualidade & 4 & 0,641 [0,559--0,720] & 0,655 $\pm$ 0,060 & $-0{,}024$ [$-0{,}122$; $+0{,}067$] \\
+    Clínicas + 4 marcadores & melhor qualidade & 10 & 0,675 [0,591--0,752] & 0,682 $\pm$ 0,077 & $+0{,}009$ [$-0{,}037$; $+0{,}052$] \\
+    \bottomrule
+  \end{tabular}}
+  \vspace{0.05cm}
+  \begin{itemize}
+    \scriptsize
+    \item Resultado \textbf{estável entre as derivações} (0,635 a 0,660), sem seleção na coorte.
+    \item Com as clínicas: 0,679 a 0,683, o mesmo patamar do protocolo A (0,681 a 0,689); o ganho nunca é significativo.
+  \end{itemize}
+  \fonte{Logística L2 sem seleção; um modelo por derivação. 4 marcadores: os 2 mais número médio de dupletes e maior pausa. O ganho é a diferença pareada de AUC por \textit{bootstrap}. AUPRC, sensibilidade e especificidade não foram calculadas para estes modelos.}
 \end{frame}
 
 % 33
