@@ -1384,6 +1384,36 @@
 \subsection{Comparação entre os cenários}
 
 % 36
+\begin{frame}{Replicação nas condições de Swee et al.: o desempenho fica próximo}
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3.5pt}\renewcommand{\arraystretch}{0.9}
+  \begin{tabular}{llcc}
+    \toprule
+    Variáveis & Modelo & AUC por partição & AUC geral [IC 95\,\%] \\
+    \midrule
+    44 marcadores & Logística L1 & 0,605 $\pm$ 0,088 & 0,587 [0,516--0,657] \\
+    44 marcadores & Logística L2 & 0,611 $\pm$ 0,094 & 0,602 [0,534--0,665] \\
+    44 marcadores & PCA (4) + logística & 0,580 $\pm$ 0,099 & 0,571 [0,498--0,644] \\
+    44 marcadores & Floresta aleatória & 0,566 $\pm$ 0,113 & 0,559 [0,488--0,633] \\
+    \textbf{4 marcadores pré-especificados} & Logística L2 & \textbf{0,659} $\pm$ 0,078 & 0,657 [0,595--0,719] \\
+    \midrule
+    Seis variáveis clínicas & Logística L2 & 0,659 $\pm$ 0,082 & 0,657 [0,592--0,724] \\
+    Clínicas + 4 marcadores pré-especificados & Logística L2 & 0,694 $\pm$ 0,102 & 0,683 [0,618--0,748] \\
+    \midrule
+    \citeonline{swee2026multimodal}, apenas ECG & rede convolucional temporal & 0,682 $\pm$ 0,030 & --- \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.2cm}
+  \begin{itemize}
+    \footnotesize
+    \item Condições do trabalho de referência: \textbf{746 pacientes} e 74 mortes súbitas, sem restrição de ritmo, derivação Y, segmentos contíguos de 30 s (${\sim}2\,500$ por paciente).
+    \item Os 4 marcadores: DP da frequência cardíaca, carga de ectopia, número médio de dupletes e maior pausa, definidos de antemão.
+    \item Diferença de ${\sim}0,02$ para 0,682, menor que a variação entre partições; o valor de referência cai dentro do IC (0,595--0,719).
+  \end{itemize}
+  \fonte{AUC por partição: média e DP das cinco partições (métrica do trabalho de referência). Nos 517 pacientes o quadro é o mesmo: poucos marcadores escolhidos de antemão superam o conjunto completo.}
+\end{frame}
+
 \begin{frame}{Os três cenários lado a lado}
   \begin{columns}[c]
     \column{0.47\textwidth}
