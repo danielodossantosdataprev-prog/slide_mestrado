@@ -1064,7 +1064,7 @@
 \subsection{Cenário II: marcadores do ECG}
 
 % 31
-\begin{frame}{Cenário II: segmentos de 5 minutos superam as redes}
+\begin{frame}{Cenário II (1/2): 44 marcadores de 5 minutos superam as redes}
   \centering
   \scriptsize
   \setlength{\tabcolsep}{3.5pt}
@@ -1076,6 +1076,8 @@
     \midrule
     Marcadores, logística L2 & 44 & 0,589 [0,507--0,671] & 0,595 $\pm$ 0,066 & 0,180 & 0,418 & 0,714 \\
     Marcadores, logística L1 & 44 & 0,585 [0,503--0,666] & 0,588 $\pm$ 0,044 & 0,163 & 0,400 & 0,706 \\
+    Marcadores, PCA (2) + logística & 44 & 0,610 [0,524--0,692] & 0,618 $\pm$ 0,064 & 0,192 & 0,364 & 0,825 \\
+    Marcadores, PCA (3) + logística & 44 & 0,602 [0,514--0,685] & 0,609 $\pm$ 0,058 & 0,193 & 0,364 & 0,825 \\
     \textbf{Marcadores, PCA (4) + logística} & 44 & \textbf{0,624} [0,535--0,708] & 0,623 $\pm$ 0,052 & 0,232 & 0,345 & 0,868 \\
     Marcadores, floresta aleatória & 44 & 0,621 [0,537--0,701] & 0,627 $\pm$ 0,025 & 0,184 & 0,400 & 0,801 \\
     \bottomrule
@@ -1083,13 +1085,47 @@
   \vspace{0.2cm}
   \begin{itemize}
     \footnotesize
+    \item Os melhores modelos reduzem a dimensão (PCA, floresta); o número de
+      componentes, 2, 3 ou 4, pouco muda o resultado.
     \item Três marcadores resistiram à correção de Benjamini-Hochberg: média e
       desvio-padrão da potência HF e \textbf{desvio-padrão da frequência
       cardíaca}.
-    \item Escolher poucos marcadores olhando toda a coorte dá cerca de 0,05 a
-      mais (otimismo); dentro da partição, 0,580.
   \end{itemize}
   \fonte{Sensibilidade e especificidade no limiar de cada modelo. AUPRC do acaso: 0,106.}
+\end{frame}
+
+\begin{frame}{Cenário II (2/2): poucos marcadores e o otimismo da seleção}
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{llrcccrr}
+    \toprule
+    Entrada & Modelo & Var. & AUC geral [IC 95\,\%] & AUC por partição & AUPRC & Sens. & Espec. \\
+    \midrule
+    Clínicas (referência) & Logística L2 & 6 & 0,661 [0,577--0,741] & 0,673 $\pm$ 0,114 & 0,233 & 0,564 & 0,699 \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Marcadores escolhidos olhando a coorte inteira}} \\
+    4 marcadores & Logística L2 & 4 & 0,627 [0,541--0,710] & 0,631 $\pm$ 0,026 & 0,200 & 0,436 & 0,792 \\
+    2 marcadores & Logística L2 & 2 & 0,647 [0,559--0,727] & 0,659 $\pm$ 0,062 & 0,230 & 0,527 & 0,758 \\
+    Clínicas + 4 marcadores & Logística L2 & 10 & 0,684 [0,601--0,762] & 0,696 $\pm$ 0,083 & 0,220 & 0,582 & 0,755 \\
+    Clínicas + 2 marcadores & Logística L2 & 8 & 0,689 [0,607--0,769] & 0,700 $\pm$ 0,087 & 0,251 & 0,636 & 0,714 \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Seleção refeita dentro de cada partição}} \\
+    44 marcadores (4 escolhidos) & Logística L2 & 4 & 0,580 [0,497--0,660] & 0,589 $\pm$ 0,083 & 0,163 & 0,436 & 0,732 \\
+    Clínicas + 44 marcadores (6 escolhidas) & Logística L2 & 6 & 0,640 [0,552--0,726] & 0,644 $\pm$ 0,068 & 0,185 & 0,527 & 0,734 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.2cm}
+  \begin{itemize}
+    \footnotesize
+    \item Os 4 marcadores: média da potência HF, desvio-padrão da frequência
+      cardíaca, média da entropia amostral e média da razão SD1/SD2; os 2
+      primeiros formam o par de 2 marcadores.
+    \item Escolher olhando toda a coorte dá \textbf{cerca de 0,05 a mais} (0,627
+      contra 0,580): é o otimismo da seleção. Os valores com seleção dentro da
+      partição são os que representam pacientes novos.
+  \end{itemize}
+  \fonte{Logística L2 com $C = 1$. Sensibilidade e especificidade no limiar de cada modelo.}
 \end{frame}
 
 % 32
