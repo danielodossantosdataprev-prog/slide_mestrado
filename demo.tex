@@ -428,7 +428,7 @@
 \end{frame}
 
 % 16
-\begin{frame}{Como medir se o modelo separa casos de controles?}
+\begin{frame}{Métricas sem limiar: AUC e AUPRC}
   \begin{columns}[T]
     \column{0.52\textwidth}
     \small
@@ -454,6 +454,39 @@
       \node[font=\tiny, cinza, rotate=45] at (1.9,2.15) {acaso};
     \end{tikzpicture}
   \end{columns}
+\end{frame}
+
+% 16b
+\begin{frame}{Métricas no limiar de decisão: sensibilidade, especificidade e VPP}
+  \begin{columns}[T]
+    \column{0.47\textwidth}
+    \centering
+    \footnotesize
+    \begin{tabular}{cc|cc}
+      \multicolumn{2}{c|}{} & \multicolumn{2}{c}{Real} \\
+      & & MSC & Sem MSC \\
+      \midrule
+      \multirow{2}{*}{Previsto} & MSC & VP & FP \\
+      & Sem MSC & FN & VN \\
+    \end{tabular}
+    \vspace{0.3cm}
+
+    \small
+    \begin{block}{Limiar de decisão}
+      A probabilidade vira \textbf{sim ou não} no limiar de Youden, que maximiza
+      sensibilidade + especificidade $-1$, escolhido \textbf{na validação} e
+      aplicado ao teste sem ajuste.
+    \end{block}
+    \column{0.51\textwidth}
+    \small
+    \begin{itemize}
+      \item \textbf{Sensibilidade (\textit{recall})} $=\dfrac{VP}{VP+FN}$: fração das MSC que o modelo acerta.
+      \item \textbf{Especificidade} $=\dfrac{VN}{VN+FP}$: fração dos pacientes sem MSC que o modelo acerta.
+      \item \textbf{VPP (precisão)} $=\dfrac{VP}{VP+FP}$: entre os classificados como risco, quantos tiveram MSC.
+      \item \textbf{Acurácia não é usada}: prever sempre ``sem MSC'' dá 89,4\,\%, sem utilidade.
+    \end{itemize}
+  \end{columns}
+  \fonte{Sensibilidade e especificidade aparecem nas tabelas de resultados; a AUC e a AUPRC não dependem do limiar. Com prevalência de 10,6\,\%, o VPP de um modelo aleatório é próximo de 0,106.}
 \end{frame}
 
 % ==============================================================================
