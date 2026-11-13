@@ -900,10 +900,12 @@
       \item Validação cruzada \textbf{estratificada em 5 partições}, dividida
         por paciente.
       \item Cada paciente cai no teste \textbf{uma única vez}.
-      \item \textbf{AUC geral}: uma AUC sobre as predições dos 517
-        pacientes (medida principal).
-      \item \textbf{AUC por partição}: média $\pm$ desvio-padrão das cinco
-        AUC de teste.
+      \item \textbf{AUC geral} (medida principal): cada paciente é predito por um
+        modelo que \textbf{não o viu no treino} (predição \textit{out-of-fold}).
+        As 517 predições são reunidas e se calcula \textbf{uma única AUC}, direta
+        (empírica), com IC de 95\,\% por \textit{bootstrap}.
+      \item \textbf{AUC por partição}: média $\pm$ desvio-padrão das cinco AUC
+        de teste; mede a estabilidade (11 casos por partição).
       \item Comparações pareadas por \textit{bootstrap}.
     \end{itemize}
     \column{0.48\textwidth}
@@ -922,7 +924,7 @@
       Total & 517 (55) & --- \\
       \bottomrule
     \end{tabular}
-    \fonte{Pacientes (casos).}
+    \fonte{Pacientes (casos). A AUC geral avalia os 55 eventos juntos; as duas AUC podem diferir um pouco porque o modelo de cada partição dá probabilidades em escala própria.}
   \end{columns}
 \end{frame}
 
