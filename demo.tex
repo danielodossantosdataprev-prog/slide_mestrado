@@ -1156,40 +1156,6 @@
   \fonte{Logística L2 com $C = 1$. Sensibilidade e especificidade no limiar de cada modelo.}
 \end{frame}
 
-% 32
-\begin{frame}{Cenário II: segmentos de 30 s e a armadilha da pseudorreplicação}
-  \begin{columns}[T]
-    \column{0.47\textwidth}
-    \begin{block}{Unidade de análise}
-      \scriptsize
-      \setlength{\tabcolsep}{3pt}
-      \begin{tabular}{lc}
-        \toprule
-        Análise & Signif. (de 24) \\
-        \midrule
-        Por segmento (328\,807) & 22 \\
-        Por paciente (517) & 2 \\
-        Após correção & 0 \\
-        \bottomrule
-      \end{tabular}
-      \vspace{0.1cm}\\
-      Contar segmentos como pacientes infla a significância
-      (pseudorreplicação; \citeonline{hurlbert1984pseudoreplication}).
-    \end{block}
-    \column{0.51\textwidth}
-    \begin{block}{Modelos}
-      \footnotesize
-      \begin{itemize}
-        \item Treinados \textbf{sobre cada segmento}: 0,53 a 0,56.
-        \item Sobre os resumos por paciente (12 configurações): \textbf{0,619}
-          [0,537--0,700] no melhor caso (PCA, conjunto 2).
-        \item Padrão consistente: casos com \textbf{menor variação da
-          frequência} ao longo do dia.
-      \end{itemize}
-    \end{block}
-  \end{columns}
-\end{frame}
-
 % protocolo B: tabelas
 \begin{frame}{Cenário II, protocolo B (1/2): resumos por paciente de 30 s}
   \centering
