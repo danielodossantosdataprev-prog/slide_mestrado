@@ -599,9 +599,9 @@
       (det) at ([yshift=-0.35cm]gp.south -| in.west)
       {\textbf{Cada BlocoConv:} convolução 1D (núcleo de 15 amostras, 75\,ms) $\rightarrow$
         normalização em lote $\rightarrow$ ReLU $\rightarrow$ agrupamento máximo (fator 4)
-        $\rightarrow$ descarte (0,1).\\
-        \textbf{Classificador:} descarte (0,5) $\rightarrow$ linear (128 $\rightarrow$ 64)
-        $\rightarrow$ normalização em lote $\rightarrow$ ReLU $\rightarrow$ descarte (0,5)
+        $\rightarrow$ \textit{dropout} (0,1).\\
+        \textbf{Classificador:} \textit{dropout} (0,5) $\rightarrow$ linear (128 $\rightarrow$ 64)
+        $\rightarrow$ normalização em lote $\rightarrow$ ReLU $\rightarrow$ \textit{dropout} (0,5)
         $\rightarrow$ linear (64 $\rightarrow$ 1).};
     \end{tikzpicture}}
   \fonte{\raggedright Variante simples, janela de 2 minutos (24\,000 amostras a 200 Hz). O agrupamento global concatena a média e o máximo de cada canal; só depois dele atua o classificador.\par}
@@ -649,8 +649,8 @@
         $\rightarrow$ ReLU $\rightarrow$ convolução 3 $\rightarrow$ normalização, somados ao
         atalho e seguidos de ReLU); no primeiro bloco dos estágios 2 a 4, passo 2 e
         atalho com projeção.\\
-        \textbf{Classificador:} descarte (0,5) $\rightarrow$ linear (1\,024 $\rightarrow$ 64)
-        $\rightarrow$ normalização em lote $\rightarrow$ ReLU $\rightarrow$ descarte (0,5)
+        \textbf{Classificador:} \textit{dropout} (0,5) $\rightarrow$ linear (1\,024 $\rightarrow$ 64)
+        $\rightarrow$ normalização em lote $\rightarrow$ ReLU $\rightarrow$ \textit{dropout} (0,5)
         $\rightarrow$ linear (64 $\rightarrow$ 1).};
     \end{tikzpicture}}
   \fonte{\raggedright ResNet-18 completa ($P = 64$), janela de 2 minutos. As demais variam blocos por estágio, $P$ ou tipo de bloco.\par}
@@ -745,7 +745,7 @@
       Dimensão ($d$) & 256 \\
       Cabeças ($h$) & 4 \\
       Dimensão da rede interna & 512 \\
-      Descarte & 0,3 \\
+      \textit{Dropout} & 0,3 \\
       Parâmetros totais & 1\,491\,553 \\
       \bottomrule
     \end{tabular}
