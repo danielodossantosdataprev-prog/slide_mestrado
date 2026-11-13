@@ -303,104 +303,6 @@
   \fonte{A lista completa dos marcadores usados está na Metodologia (Cenário II).}
 \end{frame}
 
-\begin{frame}{Aprendizado residual: blocos básico e de gargalo}
-  \centering
-  \resizebox*{!}{6.2cm}{%
-\begin{tikzpicture}[
-        font=\footnotesize,
-        cv/.style={draw, rounded corners=2pt, fill=blue!8, minimum width=3.6cm, minimum height=0.55cm, align=center},
-        bn/.style={draw, rounded corners=2pt, fill=green!8, minimum width=3.6cm, minimum height=0.45cm},
-        re/.style={draw, rounded corners=2pt, fill=orange!12, minimum width=3.6cm, minimum height=0.45cm},
-        soma/.style={draw, circle, inner sep=1pt, font=\normalsize},
-        seta/.style={-{Stealth[length=2mm]}, thick},
-        node distance=0.12cm
-      ]
-      % ---- (a) bloco basico ----
-      \node[font=\small\bfseries] (ta) {(a) Bloco básico ($E = 1$)};
-      \node[below=0.35cm of ta] (xa) {$\mathbf{x}$};
-      \node[cv, below=0.35cm of xa] (a1) {Convolução, núcleo 3};
-      \node[bn, below=of a1] (a2) {Normalização em lote};
-      \node[re, below=of a2] (a3) {ReLU};
-      \node[cv, below=0.3cm of a3] (a4) {Convolução, núcleo 3};
-      \node[bn, below=of a4] (a5) {Normalização em lote};
-      \node[soma, below=0.4cm of a5] (sa) {$+$};
-      \node[re, below=0.3cm of sa] (a6) {ReLU};
-      \node[below=0.3cm of a6] (ya) {$\mathbf{y}$};
-      \draw[seta] (xa) -- (a1);
-      \draw[seta] (a3) -- (a4);
-      \draw[seta] (a5) -- (sa);
-      \draw[seta] (sa) -- (a6);
-      \draw[seta] (a6) -- (ya);
-      \draw[seta] ([yshift=-0.12cm]xa.south) -- ++(2.35,0) |- (sa.east)
-      node[pos=0.25, right, align=left, font=\scriptsize] {atalho:\\identidade ou\\projeção 1\,$\times$\,1};
-      % ---- (b) bloco de gargalo ----
-      \node[font=\small\bfseries, right=4.6cm of ta] (tb) {(b) Bloco de gargalo ($E = 4$)};
-      \node[below=0.35cm of tb] (xb) {$\mathbf{x}$};
-      \node[cv, below=0.35cm of xb] (b1) {Convolução, núcleo 1\\(reduz canais)};
-      \node[bn, below=of b1] (b2) {Normalização em lote};
-      \node[re, below=of b2] (b3) {ReLU};
-      \node[cv, below=0.25cm of b3] (b4) {Convolução, núcleo 3};
-      \node[bn, below=of b4] (b5) {Normalização em lote};
-      \node[re, below=of b5] (b6) {ReLU};
-      \node[cv, below=0.25cm of b6] (b7) {Convolução, núcleo 1\\(expande canais $\times 4$)};
-      \node[bn, below=of b7] (b8) {Normalização em lote};
-      \node[soma, below=0.3cm of b8] (sb) {$+$};
-      \node[re, below=0.25cm of sb] (b9) {ReLU};
-      \node[below=0.25cm of b9] (yb) {$\mathbf{y}$};
-      \draw[seta] (xb) -- (b1);
-      \draw[seta] (b3) -- (b4);
-      \draw[seta] (b6) -- (b7);
-      \draw[seta] (b8) -- (sb);
-      \draw[seta] (sb) -- (b9);
-      \draw[seta] (b9) -- (yb);
-      \draw[seta] ([yshift=-0.12cm]xb.south) -- ++(2.35,0) |- (sb.east)
-      node[pos=0.25, right, align=left, font=\scriptsize] {atalho:\\identidade ou\\projeção 1\,$\times$\,1};
-    \end{tikzpicture}}
-  \fonte{O bloco aprende só a diferença e soma a entrada, $\mathbf{y}=\mathrm{ReLU}(\mathcal{F}(\mathbf{x})+\mathbf{x})$ \cite{he2016deep}, o que facilita treinar redes profundas.}
-\end{frame}
-
-% 14
-\begin{frame}{Modelo com atenção: ResNet-18 reduzida + codificador Transformer}
-  \centering
-  \begin{tikzpicture}[node distance=0.35cm, font=\scriptsize,
-      cx/.style={draw=destaque, fill=boxcolor!60, rounded corners=2pt, minimum height=1.0cm, minimum width=1.7cm, align=center},
-      atn/.style={draw=destaque, fill=melhor, rounded corners=2pt, minimum height=1.0cm, minimum width=2.2cm, align=center},
-      pl/.style={draw=cinza, fill=white, rounded corners=2pt, minimum height=1.0cm, minimum width=1.7cm, align=center},
-      >={Stealth[length=2mm]}]
-    \node[pl] (in) {Entrada\\3 deriv.\\$[3\times24\,000]$};
-    \node[cx, right=of in] (r) {ResNet-18\\reduzida\\$[256\times750]$};
-    \node[atn, right=of r] (t) {Codificador\\\textit{Transformer}\\1 camada, 4 cabeças};
-    \node[pl, right=of t] (gp) {Agrup.\\global\\$[512]$};
-    \node[pl, right=of gp] (cl) {Camada\\linear};
-    \draw[->] (in)--(r); \draw[->] (r)--(t); \draw[->] (t)--(gp); \draw[->] (gp)--(cl);
-  \end{tikzpicture}
-  \vspace{0.35cm}
-
-  \small
-  \begin{columns}[T]
-    \column{0.52\textwidth}
-    \begin{itemize}
-      \item Convoluções relacionam instantes vizinhos (campo receptivo de ${\sim}2{,}2$ s); a \textbf{autoatenção} \cite{vaswani2017attention} relaciona todas as 750 posições:
-    \end{itemize}
-    \equacao{\mathrm{Atenção}(Q,K,V)=\mathrm{softmax}\!\left(\tfrac{QK^{\top}}{\sqrt{d}}\right)V}
-    \column{0.44\textwidth}
-    \footnotesize
-    \begin{tabular}{ll}
-      \toprule
-      Parâmetro & Valor \\
-      \midrule
-      Dimensão ($d$) & 256 \\
-      Cabeças ($h$) & 4 \\
-      Dimensão da rede interna & 512 \\
-      Descarte & 0,3 \\
-      Parâmetros totais & 1\,491\,553 \\
-      \bottomrule
-    \end{tabular}
-  \end{columns}
-  \fonte{Custo da atenção cresce com o quadrado do comprimento da sequência.}
-\end{frame}
-
-% 15
 \begin{frame}{Modelos clássicos: poucas variáveis, poucos eventos}
   \begin{columns}[T]
     \column{0.49\textwidth}
@@ -746,6 +648,105 @@
     \end{tikzpicture}}
   \fonte{\raggedright ResNet-18 completa ($P = 64$), janela de 2 minutos. As demais variam blocos por estágio, $P$ ou tipo de bloco.\par}
 \end{frame}
+
+\begin{frame}{Cenário I: blocos residuais básico e de gargalo}
+  \centering
+  \resizebox*{!}{6.2cm}{%
+\begin{tikzpicture}[
+        font=\footnotesize,
+        cv/.style={draw, rounded corners=2pt, fill=blue!8, minimum width=3.6cm, minimum height=0.55cm, align=center},
+        bn/.style={draw, rounded corners=2pt, fill=green!8, minimum width=3.6cm, minimum height=0.45cm},
+        re/.style={draw, rounded corners=2pt, fill=orange!12, minimum width=3.6cm, minimum height=0.45cm},
+        soma/.style={draw, circle, inner sep=1pt, font=\normalsize},
+        seta/.style={-{Stealth[length=2mm]}, thick},
+        node distance=0.12cm
+      ]
+      % ---- (a) bloco basico ----
+      \node[font=\small\bfseries] (ta) {(a) Bloco básico ($E = 1$)};
+      \node[below=0.35cm of ta] (xa) {$\mathbf{x}$};
+      \node[cv, below=0.35cm of xa] (a1) {Convolução, núcleo 3};
+      \node[bn, below=of a1] (a2) {Normalização em lote};
+      \node[re, below=of a2] (a3) {ReLU};
+      \node[cv, below=0.3cm of a3] (a4) {Convolução, núcleo 3};
+      \node[bn, below=of a4] (a5) {Normalização em lote};
+      \node[soma, below=0.4cm of a5] (sa) {$+$};
+      \node[re, below=0.3cm of sa] (a6) {ReLU};
+      \node[below=0.3cm of a6] (ya) {$\mathbf{y}$};
+      \draw[seta] (xa) -- (a1);
+      \draw[seta] (a3) -- (a4);
+      \draw[seta] (a5) -- (sa);
+      \draw[seta] (sa) -- (a6);
+      \draw[seta] (a6) -- (ya);
+      \draw[seta] ([yshift=-0.12cm]xa.south) -- ++(2.35,0) |- (sa.east)
+      node[pos=0.25, right, align=left, font=\scriptsize] {atalho:\\identidade ou\\projeção 1\,$\times$\,1};
+      % ---- (b) bloco de gargalo ----
+      \node[font=\small\bfseries, right=4.6cm of ta] (tb) {(b) Bloco de gargalo ($E = 4$)};
+      \node[below=0.35cm of tb] (xb) {$\mathbf{x}$};
+      \node[cv, below=0.35cm of xb] (b1) {Convolução, núcleo 1\\(reduz canais)};
+      \node[bn, below=of b1] (b2) {Normalização em lote};
+      \node[re, below=of b2] (b3) {ReLU};
+      \node[cv, below=0.25cm of b3] (b4) {Convolução, núcleo 3};
+      \node[bn, below=of b4] (b5) {Normalização em lote};
+      \node[re, below=of b5] (b6) {ReLU};
+      \node[cv, below=0.25cm of b6] (b7) {Convolução, núcleo 1\\(expande canais $\times 4$)};
+      \node[bn, below=of b7] (b8) {Normalização em lote};
+      \node[soma, below=0.3cm of b8] (sb) {$+$};
+      \node[re, below=0.25cm of sb] (b9) {ReLU};
+      \node[below=0.25cm of b9] (yb) {$\mathbf{y}$};
+      \draw[seta] (xb) -- (b1);
+      \draw[seta] (b3) -- (b4);
+      \draw[seta] (b6) -- (b7);
+      \draw[seta] (b8) -- (sb);
+      \draw[seta] (sb) -- (b9);
+      \draw[seta] (b9) -- (yb);
+      \draw[seta] ([yshift=-0.12cm]xb.south) -- ++(2.35,0) |- (sb.east)
+      node[pos=0.25, right, align=left, font=\scriptsize] {atalho:\\identidade ou\\projeção 1\,$\times$\,1};
+    \end{tikzpicture}}
+  \fonte{O bloco aprende só a diferença e soma a entrada, $\mathbf{y}=\mathrm{ReLU}(\mathcal{F}(\mathbf{x})+\mathbf{x})$ \cite{he2016deep}, o que facilita treinar redes profundas.}
+\end{frame}
+
+% 14
+\begin{frame}{Cenário I: ResNet-18 reduzida com atenção}
+  \centering
+  \begin{tikzpicture}[node distance=0.35cm, font=\scriptsize,
+      cx/.style={draw=destaque, fill=boxcolor!60, rounded corners=2pt, minimum height=1.0cm, minimum width=1.7cm, align=center},
+      atn/.style={draw=destaque, fill=melhor, rounded corners=2pt, minimum height=1.0cm, minimum width=2.2cm, align=center},
+      pl/.style={draw=cinza, fill=white, rounded corners=2pt, minimum height=1.0cm, minimum width=1.7cm, align=center},
+      >={Stealth[length=2mm]}]
+    \node[pl] (in) {Entrada\\3 deriv.\\$[3\times24\,000]$};
+    \node[cx, right=of in] (r) {ResNet-18\\reduzida\\$[256\times750]$};
+    \node[atn, right=of r] (t) {Codificador\\\textit{Transformer}\\1 camada, 4 cabeças};
+    \node[pl, right=of t] (gp) {Agrup.\\global\\$[512]$};
+    \node[pl, right=of gp] (cl) {Camada\\linear};
+    \draw[->] (in)--(r); \draw[->] (r)--(t); \draw[->] (t)--(gp); \draw[->] (gp)--(cl);
+  \end{tikzpicture}
+  \vspace{0.35cm}
+
+  \small
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \begin{itemize}
+      \item Convoluções relacionam instantes vizinhos (campo receptivo de ${\sim}2{,}2$ s); a \textbf{autoatenção} \cite{vaswani2017attention} relaciona todas as 750 posições:
+    \end{itemize}
+    \equacao{\mathrm{Atenção}(Q,K,V)=\mathrm{softmax}\!\left(\tfrac{QK^{\top}}{\sqrt{d}}\right)V}
+    \column{0.44\textwidth}
+    \footnotesize
+    \begin{tabular}{ll}
+      \toprule
+      Parâmetro & Valor \\
+      \midrule
+      Dimensão ($d$) & 256 \\
+      Cabeças ($h$) & 4 \\
+      Dimensão da rede interna & 512 \\
+      Descarte & 0,3 \\
+      Parâmetros totais & 1\,491\,553 \\
+      \bottomrule
+    \end{tabular}
+  \end{columns}
+  \fonte{Custo da atenção cresce com o quadrado do comprimento da sequência.}
+\end{frame}
+
+% 15
 
 % 22
 \begin{frame}{Cenário I: como as redes foram treinadas}
