@@ -995,33 +995,6 @@
   \end{itemize}
 \end{frame}
 
-% 29
-\begin{frame}{Cenário I: o problema está no sinal, não no procedimento}
-  \begin{columns}[T]
-    \column{0.49\textwidth}
-    \begin{block}{Variabilidade entre execuções}
-      \small
-      ResNet-18 mínima treinada duas vezes, nas mesmas partições:
-      \begin{itemize}
-        \item 0,562 $\rightarrow$ \textbf{0,480}
-      \end{itemize}
-      A diferença (0,08) é maior que a diferença entre a melhor e a pior
-      arquitetura.
-    \end{block}
-    \column{0.49\textwidth}
-    \begin{block}{Sem restrição ao ritmo sinusal}
-      \small
-      ResNet-18 em 703 pacientes e 85 casos:
-      \begin{itemize}
-        \item AUC de \textbf{0,575} [0,511--0,642], único intervalo acima de 0,5.
-      \end{itemize}
-      A rede aprende quando há um padrão reconhecível: a fibrilação atrial.
-    \end{block}
-  \end{columns}
-  \msg{O procedimento funciona; o sinal em ritmo sinusal é que não traz um
-    padrão de MSC reconhecível pelas redes.}
-\end{frame}
-
 % 30
 \begin{frame}{Cenário I: curvas próximas da diagonal do acaso}
   \begin{columns}[c]
