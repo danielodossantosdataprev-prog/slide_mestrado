@@ -894,7 +894,7 @@
 % 25
 \begin{frame}{Como avaliamos: cada paciente testado uma única vez}
   \begin{columns}[T]
-    \column{0.5\textwidth}
+    \column{0.46\textwidth}
     \small
     \begin{itemize}
       \item Validação cruzada \textbf{estratificada em 5 partições}, dividida
@@ -908,23 +908,26 @@
         de teste; mede a estabilidade (11 casos por partição).
       \item Comparações pareadas por \textit{bootstrap}.
     \end{itemize}
-    \column{0.48\textwidth}
+    \column{0.52\textwidth}
     \centering
     \footnotesize
-    \begin{tabular}{ccc}
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{cccrr}
       \toprule
-      Rodada & Teste & Treino \\
+       &  &  & \multicolumn{2}{c}{Cenário I: treino em} \\
+      \cmidrule(lr){4-5}
+      Rodada & Teste & Treino & ajuste & validação \\
       \midrule
-      1 & 104 (11) & 413 (44) \\
-      2 & 104 (11) & 413 (44) \\
-      3 & 103 (11) & 414 (44) \\
-      4 & 103 (11) & 414 (44) \\
-      5 & 103 (11) & 414 (44) \\
+      1 & 104 (11) & 413 (44) & 309 (33) & 104 (11) \\
+      2 & 104 (11) & 413 (44) & 309 (33) & 104 (11) \\
+      3 & 103 (11) & 414 (44) & 310 (33) & 104 (11) \\
+      4 & 103 (11) & 414 (44) & 310 (33) & 104 (11) \\
+      5 & 103 (11) & 414 (44) & 310 (33) & 104 (11) \\
       \midrule
-      Total & 517 (55) & --- \\
+      Total & 517 (55) & --- & --- & --- \\
       \bottomrule
     \end{tabular}
-    \fonte{Pacientes (casos). A AUC geral avalia os 55 eventos juntos; as duas AUC podem diferir um pouco porque o modelo de cada partição dá probabilidades em escala própria.}
+    \fonte{Pacientes (casos). No Cenário I o treino é dividido em ajuste dos pesos (75\,\%) e validação interna (25\,\%: época e limiar); nos Cenários II e III o treino fica inteiro. A AUC geral avalia os 55 eventos juntos; as duas AUC podem diferir um pouco porque o modelo de cada partição dá probabilidades em escala própria.}
   \end{columns}
 \end{frame}
 
