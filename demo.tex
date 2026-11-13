@@ -303,83 +303,7 @@
   \fonte{A lista completa dos marcadores usados está na Metodologia (Cenário II).}
 \end{frame}
 
-% 12
-\begin{frame}{Modelo convolucional: variantes mínima, simples e média}
-  \centering
-  \begin{tikzpicture}[node distance=0.35cm, font=\scriptsize,
-      cx/.style={draw=destaque, fill=boxcolor!60, rounded corners=2pt, minimum height=1.0cm, minimum width=1.55cm, align=center},
-      pl/.style={draw=cinza, fill=white, rounded corners=2pt, minimum height=1.0cm, minimum width=1.55cm, align=center},
-      >={Stealth[length=2mm]}]
-    \node[pl] (in) {Entrada\\3 derivações};
-    \node[cx, right=of in] (b1) {Bloco 1\\conv.};
-    \node[cx, right=of b1] (b2) {Bloco 2\\conv.};
-    \node[cx, right=of b2] (b3) {Bloco 3\\conv.};
-    \node[cx, right=of b3] (b4) {Bloco 4\\(simples e média)};
-    \node[pl, right=of b4] (gp) {Agrup.\\global};
-    \node[pl, right=of gp] (cl) {Classif.\\2 camadas};
-    \draw[->] (in)--(b1); \draw[->] (b1)--(b2); \draw[->] (b2)--(b3); \draw[->] (b3)--(b4); \draw[->] (b4)--(gp); \draw[->] (gp)--(cl);
-    \node[font=\tiny, cinza, below=0.05cm of b2, text width=4.5cm, align=center] {convolução 1D $\to$ normalização $\to$ ReLU $\to$ agrupamento máximo $\to$ descarte};
-  \end{tikzpicture}
-  \vspace{0.3cm}
-
-  \footnotesize
-  \begin{tabular}{lcccr}
-    \toprule
-    Variante & Blocos & Filtros por bloco & Parâmetros & Janela \\
-    \midrule
-    Mínima & 3 & 8, 16, 32 & 14\,425 & 2 min e 10 s \\
-    Simples & 4 & 16, 32, 64, 64 & 109\,361 & 2 min e 10 s \\
-    Média & 4 & 32, 64, 128, 128 & 418\,145 & 2 min e 10 s \\
-    \bottomrule
-  \end{tabular}
-  \vspace{0.25cm}
-  \scriptsize
-  \begin{itemize}
-    \item Convolução 1D com núcleo de 75 ms (${\approx}$ um QRS); agrupamento global por média e máximo.
-    \item Perda: entropia cruzada ponderada, $w_{+}=N_0/N_1\approx 8{,}4$.
-  \end{itemize}
-  \fonte{Arquitetura completa, com as dimensões de cada bloco, na Metodologia (Cenário I).}
-\end{frame}
-
-% 13
-\begin{frame}{Modelo residual: ResNet-18, ResNet-34 e ResNet-50}
-  \centering
-  \begin{tikzpicture}[node distance=0.3cm, font=\scriptsize,
-      cx/.style={draw=destaque, fill=boxcolor!60, rounded corners=2pt, minimum height=1.0cm, minimum width=1.5cm, align=center},
-      pl/.style={draw=cinza, fill=white, rounded corners=2pt, minimum height=1.0cm, minimum width=1.5cm, align=center},
-      >={Stealth[length=2mm]}]
-    \node[pl] (in) {Entrada\\3 deriv.};
-    \node[pl, right=of in] (st) {Etapa\\inicial\\conv. 7, passo 2};
-    \node[cx, right=of st] (e1) {Estágio 1\\$P$ canais};
-    \node[cx, right=of e1] (e2) {Estágio 2\\$2P$};
-    \node[cx, right=of e2] (e3) {Estágio 3\\$4P$};
-    \node[cx, right=of e3] (e4) {Estágio 4\\$8P$};
-    \node[pl, right=of e4] (gp) {Agrup.\\global +\\classif.};
-    \draw[->] (in)--(st); \draw[->] (st)--(e1); \draw[->] (e1)--(e2); \draw[->] (e2)--(e3); \draw[->] (e3)--(e4); \draw[->] (e4)--(gp);
-    \node[font=\tiny, cinza, below=0.05cm of e2, text width=5.5cm, align=center] {cada estágio: blocos residuais; do 2 ao 4, comprimento $\div2$ e canais $\times2$};
-  \end{tikzpicture}
-  \vspace{0.35cm}
-
-  \footnotesize
-  \begin{tabular}{lcccr}
-    \toprule
-    Rede & Bloco & Blocos por estágio & $P$ & Parâmetros \\
-    \midrule
-    ResNet-18 reduzida & básico & 2--2--2--2 & 32 & 1\,029\,985 \\
-    ResNet-18 & básico & 2--2--2--2 & 64 & 3\,976\,385 \\
-    ResNet-34 & básico & 3--4--6--3 & 64 & 7\,350\,721 \\
-    ResNet-50 & gargalo & 3--4--6--3 & 64 & 16\,479\,937 \\
-    \bottomrule
-  \end{tabular}
-  \vspace{0.2cm}
-  \scriptsize
-  \begin{itemize}
-    \item Também a ResNet-18 mínima (78\,169 parâmetros, janela de 5,12 s). Largura: ResNet-18 reduzida $\to$ ResNet-18 (mesma profundidade, dobro de canais). Profundidade: ResNet-18 $\to$ ResNet-34.
-    \item O bloco soma a entrada à saída, $\mathbf{y}=\mathrm{ReLU}(\mathcal{F}(\mathbf{x})+\mathbf{x})$ \cite{he2016deep}; tipos de bloco no próximo slide.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Redes residuais: blocos básico e de gargalo}
+\begin{frame}{Aprendizado residual: blocos básico e de gargalo}
   \centering
   \resizebox*{!}{6.2cm}{%
 \begin{tikzpicture}[
@@ -432,6 +356,7 @@
       \draw[seta] ([yshift=-0.12cm]xb.south) -- ++(2.35,0) |- (sb.east)
       node[pos=0.25, right, align=left, font=\scriptsize] {atalho:\\identidade ou\\projeção 1\,$\times$\,1};
     \end{tikzpicture}}
+  \fonte{O bloco aprende só a diferença e soma a entrada, $\mathbf{y}=\mathrm{ReLU}(\mathcal{F}(\mathbf{x})+\mathbf{x})$ \cite{he2016deep}, o que facilita treinar redes profundas.}
 \end{frame}
 
 % 14
@@ -704,24 +629,24 @@
 \begin{frame}{Cenário I: redes de 14 mil a 16 milhões de parâmetros}
   \centering
   \footnotesize
-  \begin{tabular}{llrl}
+  \begin{tabular}{lllrl}
     \toprule
-    Família & Variante & Parâmetros & Janela \\
+    Família & Variante & Configuração & Parâmetros & Janela \\
     \midrule
-    Convolucional & mínima (3 blocos) & 14\,425 & 2 min e 10 s \\
-                  & simples (4 blocos) & 109\,361 & 2 min e 10 s \\
-                  & média (4 blocos) & 418\,145 & 2 min e 10 s \\
+    Convolucional & mínima & 3 blocos: 8, 16, 32 filtros & 14\,425 & 2 min e 10 s \\
+                  & simples & 4 blocos: 16, 32, 64, 64 & 109\,361 & 2 min e 10 s \\
+                  & média & 4 blocos: 32, 64, 128, 128 & 418\,145 & 2 min e 10 s \\
     \midrule
-    Residual & ResNet-18 mínima & 78\,169 & 5,12 s \\
-             & ResNet-18 reduzida & 1\,029\,985 & 2 min \\
-             & ResNet-18 & 3\,976\,385 & 2 min e 5,12 s \\
-             & ResNet-34 & 7\,350\,721 & 2 min \\
-             & ResNet-50 & 16\,479\,937 & 2 min \\
+    Residual & ResNet-18 mínima & básico, 2--2--2--2 & 78\,169 & 5,12 s \\
+             & ResNet-18 reduzida & básico, 2--2--2--2, $P=32$ & 1\,029\,985 & 2 min \\
+             & ResNet-18 & básico, 2--2--2--2, $P=64$ & 3\,976\,385 & 2 min e 5,12 s \\
+             & ResNet-34 & básico, 3--4--6--3, $P=64$ & 7\,350\,721 & 2 min \\
+             & ResNet-50 & gargalo, 3--4--6--3, $P=64$ & 16\,479\,937 & 2 min \\
     \midrule
-    Atenção & ResNet-18 + \textit{Transformer} & 1\,491\,553 & 2 min \\
+    Atenção & ResNet-18 + \textit{Transformer} & reduzida + 1 camada, 4 cabeças & 1\,491\,553 & 2 min \\
     \bottomrule
   \end{tabular}
-  \fonte{Capacidade variando em mais de mil vezes: se o desempenho não acompanhar, a limitação está nos dados, e não na rede.}
+  \fonte{Capacidade variando em mais de mil vezes: se o desempenho não acompanhar, a limitação está nos dados, e não na rede. Blocos por estágio e largura $P$ isolam o efeito da profundidade (ResNet-18 $\to$ 34) e da largura (reduzida $\to$ 18).}
 \end{frame}
 
 % arquitetura da CNN (mesma figura da dissertacao)
