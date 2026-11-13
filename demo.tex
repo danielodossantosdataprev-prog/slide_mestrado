@@ -303,28 +303,35 @@
   \fonte{A lista completa dos marcadores usados está na Metodologia (Cenário II).}
 \end{frame}
 
-\begin{frame}{Modelos clássicos: poucas variáveis, poucos eventos}
+\begin{frame}{Modelos utilizados: redes neurais e modelos clássicos}
   \begin{columns}[T]
     \column{0.49\textwidth}
+    \textbf{Redes neurais (sinal bruto)}
+    \begin{block}{Convolucional}
+      \footnotesize Filtros 1D para padrões locais do ECG: mínima, simples e média.
+    \end{block}
+    \begin{block}{Residual \cite{he2016deep}}
+      \footnotesize Blocos que somam a entrada à saída: ResNet-18, 34 e 50 (e
+      versões mínima e reduzida da 18).
+    \end{block}
+    \begin{block}{Com atenção \cite{vaswani2017attention}}
+      \footnotesize ResNet-18 reduzida + codificador \textit{Transformer}.
+    \end{block}
+    \column{0.49\textwidth}
+    \textbf{Modelos clássicos (marcadores e clínicas)}
     \begin{block}{Regressão logística regularizada}
-      \footnotesize
-      \textbf{L2}: reduz os coeficientes sem zerá-los.\\
+      \footnotesize \textbf{L2}: reduz os coeficientes sem zerá-los.
       \textbf{L1}: zera coeficientes e seleciona variáveis.
     \end{block}
     \begin{block}{Análise de componentes principais}
       \footnotesize Substitui marcadores correlacionados por poucas
       combinações não correlacionadas, sem usar o desfecho.
     \end{block}
-    \column{0.49\textwidth}
     \begin{block}{Floresta aleatória \cite{breiman2001random}}
-      \footnotesize Conjunto de árvores de decisão; captura relações não
-      lineares e interações entre marcadores.
-    \end{block}
-    \begin{block}{Por que modelos simples?}
-      \footnotesize 55 eventos: a regra de dez eventos por variável limita
-      o modelo a poucas variáveis.
+      \footnotesize Conjunto de árvores; captura relações não lineares e interações.
     \end{block}
   \end{columns}
+  \fonte{Redes: 14 mil a 16 milhões de parâmetros; também a ResNet-18 com ramo para as seis clínicas (Cenário III). Modelos simples porque há 55 eventos: a regra de dez eventos por variável limita o número de variáveis.}
 \end{frame}
 
 % 16
