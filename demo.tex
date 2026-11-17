@@ -581,7 +581,7 @@
       \node[conv, right=of b2] (b3) {\textbf{BlocoConv 3}\\64 canais\\$[64 \times 375]$};
       \node[conv, right=of b3] (b4) {\textbf{BlocoConv 4}\\64 canais\\$[64 \times 93]$};
       \node[pool, below=0.75cm of b4, text width=2.5cm] (gp) {\textbf{Agrupamento global}\\média e máximo: $[128]$};
-      \node[clf, below=0.75cm of b3, text width=2.05cm] (cl) {\textbf{Classificador}\\$128 \rightarrow 64 \rightarrow 1$};
+      \node[clf, below=0.75cm of b3, text width=2.05cm] (cl) {\textbf{Camadas totalmente conectadas}\\$128 \rightarrow 64 \rightarrow 1$};
       \node[io, below=0.75cm of b2, text width=2.05cm] (out) {\textbf{Sigmoide}\\probabilidade de MSC};
       \draw[seta] (in) -- (b1);
       \draw[seta] (b1) -- (b2);
@@ -601,11 +601,11 @@
       {\textbf{Cada BlocoConv:} convolução 1D (núcleo de 15 amostras, 75\,ms) $\rightarrow$
         normalização em lote $\rightarrow$ ReLU $\rightarrow$ agrupamento máximo (fator 4)
         $\rightarrow$ \textit{dropout} (0,1).\\
-        \textbf{Classificador:} \textit{dropout} (0,5) $\rightarrow$ linear (128 $\rightarrow$ 64)
+        \textbf{Camadas totalmente conectadas:} \textit{dropout} (0,5) $\rightarrow$ linear (128 $\rightarrow$ 64)
         $\rightarrow$ normalização em lote $\rightarrow$ ReLU $\rightarrow$ \textit{dropout} (0,5)
         $\rightarrow$ linear (64 $\rightarrow$ 1).};
     \end{tikzpicture}}
-  \fonte{\raggedright Variante simples, janela de 2 minutos (24\,000 amostras a 200 Hz). O agrupamento global concatena a média e o máximo de cada canal; só depois dele atua o classificador.\par}
+  \fonte{\raggedright Variante simples, janela de 2 minutos (24\,000 amostras a 200 Hz). O agrupamento global concatena a média e o máximo de cada canal; só depois dele atuam as camadas totalmente conectadas.\par}
 \end{frame}
 
 % arquitetura da ResNet-18 (mesma figura da dissertacao)
@@ -618,7 +618,7 @@
         est/.style={caixa, fill=blue!8, text width=2.05cm},
         ini/.style={caixa, fill=blue!15, text width=2.05cm},
         pool/.style={caixa, fill=orange!12, text width=2.5cm},
-        clf/.style={caixa, fill=green!8, text width=2.05cm},
+        clf/.style={caixa, fill=green!8, text width=2.6cm},
         io/.style={caixa, fill=gray!10, text width=1.75cm},
         seta/.style={-{Stealth[length=2.2mm]}, thick},
         node distance=0.28cm
@@ -630,7 +630,7 @@
       \node[est, right=of e2] (e3) {\textbf{Estágio 3}\\2 blocos, passo 2\\$[256 \times 1\,500]$};
       \node[est, below=0.75cm of e3] (e4) {\textbf{Estágio 4}\\2 blocos, passo 2\\$[512 \times 750]$};
       \node[pool, left=0.45cm of e4] (gp) {\textbf{Agrupamento global}\\média e máximo: $[1\,024]$};
-      \node[clf, left=0.45cm of gp] (cl) {\textbf{Classificador}\\$1\,024 \rightarrow 64 \rightarrow 1$};
+      \node[clf, left=0.45cm of gp] (cl) {\textbf{Camadas totalmente conectadas}\\$1\,024 \rightarrow 64 \rightarrow 1$};
       \node[io, left=0.45cm of cl, text width=2.05cm] (out) {\textbf{Sigmoide}\\probabilidade de MSC};
       \draw[seta] (in) -- (st);
       \draw[seta] (st) -- (e1);
@@ -650,7 +650,7 @@
         $\rightarrow$ ReLU $\rightarrow$ convolução 3 $\rightarrow$ normalização, somados ao
         atalho e seguidos de ReLU); no primeiro bloco dos estágios 2 a 4, passo 2 e
         atalho com projeção.\\
-        \textbf{Classificador:} \textit{dropout} (0,5) $\rightarrow$ linear (1\,024 $\rightarrow$ 64)
+        \textbf{Camadas totalmente conectadas:} \textit{dropout} (0,5) $\rightarrow$ linear (1\,024 $\rightarrow$ 64)
         $\rightarrow$ normalização em lote $\rightarrow$ ReLU $\rightarrow$ \textit{dropout} (0,5)
         $\rightarrow$ linear (64 $\rightarrow$ 1).};
     \end{tikzpicture}}
@@ -1337,7 +1337,7 @@
   \begin{itemize}
     \item \textbf{Rede concatenada:} ResNet-18 sobre o sinal + ramo com as 6 clínicas. \textbf{Treino conjunto:} a rede inteira aprende com a mesma taxa ($10^{-4}$).
     \item \textbf{Taxa reduzida:} o ramo do sinal aprende com taxa bem menor ($10^{-6}$); o resto, com $10^{-4}$.
-    \item \textbf{Extrator congelado:} o ramo do sinal fica fixo; só o ramo clínico e o classificador são ajustados.
+    \item \textbf{Extrator congelado:} o ramo do sinal fica fixo; só o ramo clínico e as camadas totalmente conectadas são ajustados.
   \end{itemize}
 \end{frame}
 
