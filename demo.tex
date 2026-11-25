@@ -404,29 +404,33 @@
 \subsection{População de estudo}
 
 % 17
-\begin{frame}{A base MUSIC: 992 pacientes acompanhados por quatro anos}
-  \begin{columns}[T]
-    \column{0.47\textwidth}
-    \begin{block}{Quem são os pacientes}
-      \small
-      \begin{itemize}
-        \item Pública no PhysioNet \cite{martinyebra2025music, martinyebra2024music}.
-        \item \textbf{992 pacientes} com insuficiência cardíaca crônica (NYHA II e III).
-        \item Recrutados em 2003--2004 em oito hospitais da Espanha.
-        \item Acompanhamento mediano de 44 meses.
-        \item Causas de óbito \textbf{adjudicadas}: separam a MSC da falência de bomba.
-      \end{itemize}
-    \end{block}
-    \column{0.51\textwidth}
-    \begin{block}{O que a base tem de cada paciente}
-      \small
-      \begin{enumerate}
-        \item \textbf{Sinal do Holter de 24 h}: 936 pacientes, três derivações (X, Y e Z), 200 Hz.
-        \item \textbf{Tabela do estudo}, preenchida na entrada: variáveis clínicas e exames.
-        \item \textbf{Desfecho}: MSC ou sobrevivência em quatro anos.
-      \end{enumerate}
-    \end{block}
-  \end{columns}
+\begin{frame}{A base MUSIC: 992 pacientes e 105 colunas}
+  \noindent{\scriptsize\color{azulesc} Pública no PhysioNet \cite{martinyebra2025music, martinyebra2024music}\,$\cdot$ insuficiência cardíaca crônica (NYHA II e III)\,$\cdot$ 8 hospitais da Espanha, 2003--2004\,$\cdot$ seguimento mediano de 44 meses\,$\cdot$ causas de óbito adjudicadas\par}
+  \vspace{-1mm}
+  \centering
+  \begin{tikzpicture}[
+      caixa/.style={rectangle, rounded corners=2pt, draw, minimum width=3.25cm, text width=3.05cm, minimum height=1.65cm, align=center, inner sep=2pt, font=\footnotesize},
+      usa/.style={fill=boxcolor, draw=azulesc},
+      nao/.style={fill=white, draw=cinza, text=cinza}]
+    \node[caixa, usa] at (0.00,0.00) {\textbf{Sinal do Holter 24 h}\\ {\color{azulesc}\textbf{3 derivações}}\\ {\scriptsize X, Y e Z, 200 Hz}};
+    \node[caixa, usa] at (3.38,0.00) {\textbf{Variáveis clínicas}\\ {\color{azulesc}\textbf{6 variáveis}}\\ {\scriptsize idade, gênero, NYHA, ondas Q, TVNS, taquiarritmia SV}};
+    \node[caixa, usa] at (6.76,0.00) {\textbf{Ecocardiograma e radiografia}\\ {\color{azulesc}\textbf{9 variáveis}}\\ {\scriptsize FEVE, átrio, diâmetros do ventrículo}};
+    \node[caixa, usa] at (10.14,0.00) {\textbf{ECG de repouso}\\ {\color{azulesc}\textbf{7 variáveis}}\\ {\scriptsize PR, QRS, QT, QTc, hipertrofia, condução}};
+    \node[caixa, usa] at (0.00,-1.80) {\textbf{Laboratório: Pro-BNP}\\ {\color{azulesc}\textbf{1 variável}}\\ {\scriptsize peptídeo natriurético}};
+    \node[caixa, nao] at (3.38,-1.80) {\textbf{Exames de sangue}\\ \textbf{19 variáveis}\\ {\scriptsize creatinina, sódio, hemoglobina, glicose, colesterol}};
+    \node[caixa, nao] at (6.76,-1.80) {\textbf{Corpo e pressão}\\ \textbf{5 variáveis}\\ {\scriptsize peso, altura, IMC, pressão arterial}};
+    \node[caixa, nao] at (10.14,-1.80) {\textbf{Etiologia e histórico}\\ \textbf{9 variáveis}\\ {\scriptsize diabetes, hipertensão, infarto prévio, síncope}};
+    \node[caixa, nao] at (0.00,-3.60) {\textbf{Hábitos}\\ \textbf{4 variáveis}\\ {\scriptsize cigarros por dia, tempo sem fumar, álcool}};
+    \node[caixa, nao] at (3.38,-3.60) {\textbf{Medicações}\\ \textbf{13 variáveis}\\ {\scriptsize betabloqueador, amiodarona, diuréticos, estatina}};
+    \node[caixa, nao] at (6.76,-3.60) {\textbf{Outras imagens}\\ \textbf{3 variáveis}\\ {\scriptsize valva mitral, fluxo mitral, congestão pulmonar}};
+    \node[caixa, nao] at (10.14,-3.60) {\textbf{Holter tabulado}\\ \textbf{15 variáveis}\\ {\scriptsize SDNN, RMSSD, pNN50, extrassístoles, dupletes}};
+  \end{tikzpicture}
+
+  \vspace{0mm}
+  {\scriptsize
+  \colorbox{boxcolor}{\strut\ \ } \,usado neste trabalho \quad
+  \fcolorbox{cinza}{white}{\strut\ \ } \,não usado \qquad
+  {\color{cinza} Mais 14 colunas de identificação, desfecho e controle (não são preditoras).}\par}
 \end{frame}
 
 % 17b
