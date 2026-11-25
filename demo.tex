@@ -405,15 +405,48 @@
 
 % 17
 \begin{frame}{A base MUSIC: 992 pacientes acompanhados por quatro anos}
-  \begin{itemize}
-    \item Pública no PhysioNet \cite{martinyebra2025music, martinyebra2024music}.
-    \item \textbf{992 pacientes} com insuficiência cardíaca crônica (NYHA II e
-      III), recrutados em 2003--2004 em oito hospitais da Espanha.
-    \item Acompanhamento mediano de 44 meses.
-    \item \textbf{Holter de 24 h} em 936 pacientes: derivações X, Y e Z, 200 Hz.
-    \item Causas de óbito \textbf{adjudicadas}: separam a MSC da falência de bomba.
-    \item Variáveis clínicas e exames na entrada do estudo.
-  \end{itemize}
+  \begin{columns}[T]
+    \column{0.47\textwidth}
+    \begin{block}{Quem são os pacientes}
+      \small
+      \begin{itemize}
+        \item Pública no PhysioNet \cite{martinyebra2025music, martinyebra2024music}.
+        \item \textbf{992 pacientes} com insuficiência cardíaca crônica (NYHA II e III).
+        \item Recrutados em 2003--2004 em oito hospitais da Espanha.
+        \item Acompanhamento mediano de 44 meses.
+        \item Causas de óbito \textbf{adjudicadas}: separam a MSC da falência de bomba.
+      \end{itemize}
+    \end{block}
+    \column{0.51\textwidth}
+    \begin{block}{O que a base tem de cada paciente}
+      \small
+      \begin{enumerate}
+        \item \textbf{Sinal do Holter de 24 h}: 936 pacientes, três derivações (X, Y e Z), 200 Hz.
+        \item \textbf{Tabela do estudo}, preenchida na entrada: variáveis clínicas e exames.
+        \item \textbf{Desfecho}: MSC ou sobrevivência em quatro anos.
+      \end{enumerate}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+% 17b
+\begin{frame}{Os dados da base e como cada um será usado}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabular}{p{2.9cm}p{5.6cm}p{2.5cm}}
+    \toprule
+    \textbf{Dado} & \textbf{O que contém} & \textbf{Onde entra} \\
+    \midrule
+    ECG do Holter (sinal) & Três derivações (X, Y e Z), 24 h, 200 Hz & Cenários I e II \\
+    Variáveis clínicas (6) & Idade, gênero, classe NYHA, ondas Q, TVNS e taquiarritmia supraventricular paroxística & Cenário III \\
+    Exames: ecocardiograma e radiografia & FEVE, átrio esquerdo, diâmetros e espessuras do ventrículo esquerdo, ventrículo direito, índice cardiotorácico & Cenário III \\
+    Exames: laudo do ECG de repouso & PR, QT, QT corrigido, QRS, hipertrofia, distúrbio de condução & Cenário III \\
+    Exames: laboratório & Pro-BNP & Cenário III \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Variáveis clínicas e exames vêm da tabela do estudo, preenchida na entrada. As medidas do Holter também tabuladas nela não são usadas: o Holter entra como sinal.}
 \end{frame}
 
 % 18
@@ -482,28 +515,27 @@
 \end{frame}
 
 % 19
-\begin{frame}{O que se sabe do paciente além do Holter}
+\begin{frame}{Variáveis clínicas e exames: o que é cada um}
   \begin{columns}[T]
-    \column{0.48\textwidth}
+    \column{0.40\textwidth}
     \begin{block}{Seis variáveis clínicas}
       \small
       \begin{itemize}
         \item Idade (anos)
-        \item Classe funcional NYHA (ordinal)
+        \item Classe funcional NYHA
         \item Gênero
         \item Ondas Q de necrose
         \item Taquicardia ventricular não sustentada
         \item Taquiarritmia supraventricular paroxística
       \end{itemize}
     \end{block}
-    \column{0.5\textwidth}
-    \begin{block}{Exames do estudo}
+    \column{0.58\textwidth}
+    \begin{block}{Exames, em três grupos}
       \small
       \begin{itemize}
-        \item \textbf{Ecocardiograma}: FEVE, diâmetros, contratilidade do VD.
-        \item \textbf{Laudo do ECG de repouso}: PR, QT, QRS.
-        \item \textbf{Medidas do Holter} tabuladas: extrassístoles, SDNN, RMSSD.
-        \item \textbf{Pro-BNP}.
+        \item \textbf{Ecocardiograma e radiografia}: FEVE, átrio esquerdo, diâmetros diastólico e sistólico e espessuras do ventrículo esquerdo, ventrículo direito (diâmetro e contratilidade), índice cardiotorácico.
+        \item \textbf{Laudo do ECG de repouso}: PR, QT, QT corrigido, QRS, QRS $>$ 120 ms, hipertrofia, distúrbio de condução.
+        \item \textbf{Laboratório}: Pro-BNP.
       \end{itemize}
     \end{block}
   \end{columns}
