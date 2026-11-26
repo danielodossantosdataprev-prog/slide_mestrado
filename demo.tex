@@ -1059,45 +1059,6 @@
 
 \subsection{Cenário I: redes profundas}
 
-% 26
-\begin{frame}{Cenário I: redes convolucionais não superaram o acaso}
-  \centering
-  \footnotesize
-  \begin{tabular}{llrcc}
-    \toprule
-    Rede & Janela & Parâmetros & AUC por partição & AUC geral [IC 95\,\%] \\
-    \midrule
-    Mínima & 2 min & 14\,425 & 0,543 $\pm$ 0,059 & 0,523 [0,440--0,612] \\
-    Simples & 2 min & 109\,361 & 0,500 $\pm$ 0,067 & 0,486 [0,402--0,578] \\
-    Média & 2 min & 418\,145 & 0,494 $\pm$ 0,119 & 0,485 [0,400--0,574] \\
-    \midrule
-    \textbf{Mínima} & \textbf{10 s} & 14\,425 & 0,589 $\pm$ 0,090 & \textbf{0,554} [0,467--0,634] \\
-    Simples & 10 s & 109\,361 & 0,509 $\pm$ 0,051 & 0,491 [0,411--0,578] \\
-    Média & 10 s & 418\,145 & 0,495 $\pm$ 0,118 & 0,485 [0,406--0,569] \\
-    \bottomrule
-  \end{tabular}
-  \msg{Nenhuma configuração se distinguiu do acaso; a rede menor obteve os
-    maiores valores.}
-\end{frame}
-
-% 27
-\begin{frame}{Cenário I: redes maiores não ajudaram}
-  \centering
-  \scriptsize
-  \begin{tabular}{llrcc}
-    \toprule
-    Rede & Janela & Parâmetros & AUC por partição & AUC geral [IC 95\,\%] \\
-    \midrule
-    \textbf{ResNet-18 mínima} & 5,12 s & 78\,169 & 0,569 $\pm$ 0,067 & \textbf{0,562} [0,475--0,642] \\
-    ResNet-18 reduzida & 2 min & 1\,029\,985 & 0,516 $\pm$ 0,102 & 0,504 [0,420--0,588] \\
-    ResNet-18 & 2 min & 3\,976\,385 & 0,528 $\pm$ 0,088 & 0,508 [0,431--0,588] \\
-    ResNet-34 & 2 min & 7\,350\,721 & 0,540 $\pm$ 0,039 & 0,514 [0,429--0,601] \\
-    ResNet-50 & 2 min & 16\,479\,937 & 0,569 $\pm$ 0,098 & 0,536 [0,448--0,618] \\
-    \bottomrule
-  \end{tabular}
-  \msg{Nem a largura nem a profundidade melhoraram o desempenho.}
-\end{frame}
-
 % 28
 \begin{frame}{Cenário I: nem atenção nem busca automática mudaram o quadro}
   \centering
