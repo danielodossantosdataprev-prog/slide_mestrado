@@ -1352,42 +1352,31 @@
 \subsection{Cenário III: variáveis clínicas}
 
 % 34
-\begin{frame}{Cenário III: resultados das variáveis clínicas}
-  \begin{columns}[T]
-    \column{0.46\textwidth}
-    \centering
-    \footnotesize
-    \begin{tabular}{lc}
-      \toprule
-      Modelo (logística L2) & AUC geral [IC 95\,\%] \\
-      \midrule
-      Seis variáveis clínicas & 0,661 [0,577--0,741] \\
-      Ecocardiograma & 0,714 [0,641--0,774] \\
-      Clínicas + ecocardiograma & 0,720 [0,640--0,789] \\
-      Clínicas + todos os exames & \textbf{0,733} [0,656--0,804] \\
-      Todos os exames & 0,738 [0,666--0,809] \\
-      \bottomrule
-    \end{tabular}
-    \column{0.52\textwidth}
-    \begin{block}{Ecocardiograma e radiografia}
-      \footnotesize
-      \begin{itemize}
-        \item FEVE (fração de ejeção do ventrículo esquerdo)
-        \item Tamanho do átrio esquerdo
-        \item Diâmetros diastólico e sistólico do ventrículo esquerdo
-        \item Espessuras do septo e da parede posterior
-        \item Diâmetro e contratilidade do ventrículo direito
-        \item Índice cardiotorácico (radiografia)
-      \end{itemize}
-    \end{block}
-  \end{columns}
-  \vspace{0.2cm}
+\begin{frame}{Cenário III: resultados por grupo de dados}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{3pt}
+  \renewcommand{\arraystretch}{1.1}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{4.6cm}cc}
+    \toprule
+    \textbf{Grupo} & \textbf{Variáveis} & \textbf{Sozinho} & \textbf{+ 6 clínicas} \\
+    \midrule
+    Seis variáveis clínicas & idade, gênero, NYHA, ondas Q, TVNS, taquiarritmia SV & 0,661 [0,577--0,741] & --- \\
+    Ecocardiograma e radiografia & FEVE, átrio esquerdo, diâmetros e espessuras do VE, VD, índice cardiotorácico & \textbf{0,714} [0,641--0,774] & \textbf{0,720} [0,640--0,789] \\
+    Laudo do ECG de repouso & PR, QRS, QT, QTc, hipertrofia, condução & 0,627 [0,550--0,710] & 0,684 [0,611--0,762] \\
+    Pro-BNP & peptídeo natriurético & 0,682 [0,605--0,753] & 0,708 [0,629--0,782] \\
+    Holter tabulado pelo estudo & RR mín. e máx., SDNN, RMSSD, pNN50, dupletes & 0,633 [0,555--0,713] & 0,673 [0,596--0,752] \\
+    Holter extraído do ECG & SDNN, RMSSD, pNN50, ectopia, dupletes, dp da FC, pausa & 0,629 [0,544--0,713] & --- \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.05cm}
   \begin{itemize}
-    \small
-    \item O ecocardiograma foi o grupo de exames mais informativo
-      ($+0{,}058$ sobre as clínicas).
-    \item Pro-BNP: $+0{,}047$; laudo do ECG e medidas do Holter acrescentaram pouco.
+    \footnotesize
+    \item Ecocardiograma e Pro-BNP foram os mais informativos
+      ($+0{,}058$ e $+0{,}047$ sobre as clínicas).
+    \item O Holter extraído do sinal (0,629) chega ao nível do tabulado (0,633).
   \end{itemize}
+  \fonte{AUC geral [IC 95\,\%], logística L2. Holter extraído: marcadores do sinal.}
 \end{frame}
 
 % 35
