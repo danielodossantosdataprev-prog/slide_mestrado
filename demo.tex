@@ -513,23 +513,29 @@
 \end{frame}
 
 % 17b
-\begin{frame}{Os dados da base e como cada um será usado}
+\begin{frame}{Os dados usados em cada cenário}
   \centering
   \footnotesize
   \setlength{\tabcolsep}{4pt}
-  \renewcommand{\arraystretch}{1.15}
-  \begin{tabular}{p{2.9cm}p{5.6cm}p{2.5cm}}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{6.3cm}>{\raggedright\arraybackslash}p{3.6cm}}
     \toprule
-    \textbf{Dado} & \textbf{O que contém} & \textbf{Onde entra} \\
+    \textbf{Cenário} & \textbf{Dado de entrada} & \textbf{Modelo} \\
     \midrule
-    ECG do Holter (sinal) & Três derivações (X, Y e Z), 24 h, 200 Hz & Cenários I e II \\
-    Variáveis clínicas (6) & Idade, gênero, classe NYHA, ondas Q, TVNS e taquiarritmia supraventricular paroxística & Cenário III \\
-    Exames: ecocardiograma e radiografia & FEVE, átrio esquerdo, diâmetros e espessuras do ventrículo esquerdo, ventrículo direito, índice cardiotorácico & Cenário III \\
-    Exames: laudo do ECG de repouso & PR, QT, QT corrigido, QRS, hipertrofia, distúrbio de condução & Cenário III \\
-    Exames: laboratório & Pro-BNP & Cenário III \\
+    \textbf{I}\newline redes profundas &
+      \textbf{Sinal bruto} do Holter: três derivações (X, Y e Z), 200 Hz, em janelas. Nenhuma variável é calculada antes. &
+      CNN, ResNet e atenção, direto sobre o sinal \\
+    \midrule
+    \textbf{II}\newline marcadores do ECG &
+      \textbf{Dados tabulares extraídos do sinal}: marcadores calculados em segmentos das derivações e resumidos por paciente (44 variáveis no protocolo A). Referência: Holter tabulado (10 medidas). &
+      Logística L1 e L2, PCA e floresta aleatória \\
+    \midrule
+    \textbf{III}\newline variáveis clínicas e exames &
+      \textbf{Tabela do estudo}: 6 variáveis clínicas e exames (ecocardiograma e radiografia, ECG de repouso e Pro-BNP), sozinhos e somados ao ECG: aos marcadores do Cenário II ou ao sinal bruto. &
+      Logística; rede ResNet-18 com ramo clínico \\
     \bottomrule
   \end{tabular}
-  \fonte{Variáveis clínicas e exames vêm da tabela do estudo, preenchida na entrada. As medidas do Holter também tabuladas nela não são usadas: o Holter entra como sinal.}
+  \fonte{Variáveis clínicas e exames vêm da tabela do estudo, preenchida na entrada (slide anterior).}
 \end{frame}
 
 % 18
