@@ -404,33 +404,82 @@
 \subsection{População de estudo}
 
 % 17
-\begin{frame}{A base MUSIC: 992 pacientes e 105 colunas}
-  \noindent{\scriptsize\color{azulesc} Pública no PhysioNet \cite{martinyebra2025music, martinyebra2024music}\,$\cdot$ insuficiência cardíaca crônica (NYHA II e III)\,$\cdot$ 8 hospitais da Espanha, 2003--2004\,$\cdot$ seguimento mediano de 44 meses\,$\cdot$ causas de óbito adjudicadas\par}
-  \vspace{-1mm}
+\begin{frame}{A base MUSIC: 992 pacientes acompanhados por quatro anos}
+  \begin{itemize}
+    \item Pública no PhysioNet \cite{martinyebra2025music, martinyebra2024music}.
+    \item \textbf{992 pacientes} com insuficiência cardíaca crônica (NYHA II e
+      III), recrutados em 2003--2004 em oito hospitais da Espanha.
+    \item Acompanhamento mediano de 44 meses.
+    \item \textbf{Holter de 24 h} em 936 pacientes: derivações X, Y e Z, 200 Hz.
+    \item \textbf{ECG de alta resolução} em 687 pacientes.
+    \item Causas de óbito \textbf{adjudicadas}: separam a MSC da falência de bomba.
+    \item Variáveis clínicas e exames na entrada do estudo.
+  \end{itemize}
+\end{frame}
+
+% 17a
+\begin{frame}{O que a base fornece de cada paciente}
   \centering
   \begin{tikzpicture}[
-      caixa/.style={rectangle, rounded corners=2pt, draw, minimum width=3.25cm, text width=3.05cm, minimum height=1.65cm, align=center, inner sep=2pt, font=\footnotesize},
+      caixa/.style={rectangle, rounded corners=2pt, draw, minimum width=3.25cm, text width=3.05cm, minimum height=1.3cm, align=center, inner sep=1.5pt, font=\scriptsize},
       usa/.style={fill=boxcolor, draw=azulesc},
-      nao/.style={fill=white, draw=cinza, text=cinza}]
-    \node[caixa, usa] at (0.00,0.00) {\textbf{Sinal do Holter 24 h}\\ {\color{azulesc}\textbf{3 derivações}}\\ {\scriptsize X, Y e Z, 200 Hz}};
-    \node[caixa, usa] at (3.38,0.00) {\textbf{Variáveis clínicas}\\ {\color{azulesc}\textbf{6 variáveis}}\\ {\scriptsize idade, gênero, NYHA, ondas Q, TVNS, taquiarritmia SV}};
-    \node[caixa, usa] at (6.76,0.00) {\textbf{Ecocardiograma e radiografia}\\ {\color{azulesc}\textbf{9 variáveis}}\\ {\scriptsize FEVE, átrio, diâmetros do ventrículo}};
-    \node[caixa, usa] at (10.14,0.00) {\textbf{ECG de repouso}\\ {\color{azulesc}\textbf{7 variáveis}}\\ {\scriptsize PR, QRS, QT, QTc, hipertrofia, condução}};
-    \node[caixa, usa] at (0.00,-1.80) {\textbf{Laboratório: Pro-BNP}\\ {\color{azulesc}\textbf{1 variável}}\\ {\scriptsize peptídeo natriurético}};
-    \node[caixa, nao] at (3.38,-1.80) {\textbf{Exames de sangue}\\ \textbf{19 variáveis}\\ {\scriptsize creatinina, sódio, hemoglobina, glicose, colesterol}};
-    \node[caixa, nao] at (6.76,-1.80) {\textbf{Corpo e pressão}\\ \textbf{5 variáveis}\\ {\scriptsize peso, altura, IMC, pressão arterial}};
-    \node[caixa, nao] at (10.14,-1.80) {\textbf{Etiologia e histórico}\\ \textbf{9 variáveis}\\ {\scriptsize diabetes, hipertensão, infarto prévio, síncope}};
-    \node[caixa, nao] at (0.00,-3.60) {\textbf{Hábitos}\\ \textbf{4 variáveis}\\ {\scriptsize cigarros por dia, tempo sem fumar, álcool}};
-    \node[caixa, nao] at (3.38,-3.60) {\textbf{Medicações}\\ \textbf{13 variáveis}\\ {\scriptsize betabloqueador, amiodarona, diuréticos, estatina}};
-    \node[caixa, nao] at (6.76,-3.60) {\textbf{Outras imagens}\\ \textbf{3 variáveis}\\ {\scriptsize valva mitral, fluxo mitral, congestão pulmonar}};
-    \node[caixa, nao] at (10.14,-3.60) {\textbf{Holter tabulado}\\ \textbf{15 variáveis}\\ {\scriptsize SDNN, RMSSD, pNN50, extrassístoles, dupletes}};
+      nao/.style={fill=white, draw=cinza, text=cinza},
+      sinal/.style={fill=boxcolor, draw=azulesc},
+      clin/.style={fill=white, draw=azulesc},
+      ctl/.style={fill=white, draw=cinza, text=cinza}]
+    ]
+    \node[caixa, sinal] at (0.00,0.00) {\textbf{Sinal do Holter 24 h}\\ {\color{azulesc}\textbf{936 pacientes}}\\ {\tiny derivações X, Y e Z, 200 Hz}};
+    \node[caixa, sinal] at (3.38,0.00) {\textbf{ECG de alta resolução}\\ {\color{azulesc}\textbf{687 pacientes}}\\ {\tiny registro separado do Holter}};
+    \node[caixa, clin] at (6.76,0.00) {\textbf{Variáveis clínicas}\\ {\color{azulesc}\textbf{6 variáveis}}\\ {\tiny idade, gênero, NYHA, ondas Q, TVNS, taquiarritmia SV}};
+    \node[caixa, clin] at (10.14,0.00) {\textbf{Ecocardiograma e radiografia}\\ {\color{azulesc}\textbf{9 variáveis}}\\ {\tiny FEVE, átrio, diâmetros do ventrículo}};
+    \node[caixa, clin] at (0.00,-1.45) {\textbf{ECG de repouso}\\ {\color{azulesc}\textbf{7 variáveis}}\\ {\tiny PR, QRS, QT, QTc, hipertrofia, condução}};
+    \node[caixa, clin] at (3.38,-1.45) {\textbf{Laboratório: Pro-BNP}\\ {\color{azulesc}\textbf{1 variável}}\\ {\tiny peptídeo natriurético}};
+    \node[caixa, clin] at (6.76,-1.45) {\textbf{Exames de sangue}\\ {\color{azulesc}\textbf{19 variáveis}}\\ {\tiny creatinina, sódio, hemoglobina, glicose, colesterol}};
+    \node[caixa, clin] at (10.14,-1.45) {\textbf{Corpo e pressão}\\ {\color{azulesc}\textbf{5 variáveis}}\\ {\tiny peso, altura, IMC, pressão arterial}};
+    \node[caixa, clin] at (0.00,-2.90) {\textbf{Etiologia e histórico}\\ {\color{azulesc}\textbf{9 variáveis}}\\ {\tiny diabetes, hipertensão, infarto prévio, síncope}};
+    \node[caixa, clin] at (3.38,-2.90) {\textbf{Hábitos}\\ {\color{azulesc}\textbf{4 variáveis}}\\ {\tiny cigarros por dia, tempo sem fumar, álcool}};
+    \node[caixa, clin] at (6.76,-2.90) {\textbf{Medicações}\\ {\color{azulesc}\textbf{13 variáveis}}\\ {\tiny betabloqueador, amiodarona, diuréticos, estatina}};
+    \node[caixa, clin] at (10.14,-2.90) {\textbf{Outras imagens}\\ {\color{azulesc}\textbf{3 variáveis}}\\ {\tiny valva mitral, fluxo mitral, congestão pulmonar}};
+    \node[caixa, clin] at (0.00,-4.35) {\textbf{Holter tabulado}\\ {\color{azulesc}\textbf{15 variáveis}}\\ {\tiny SDNN, RMSSD, pNN50, extrassístoles, dupletes}};
+    \node[caixa, ctl] at (3.38,-4.35) {\textbf{Identificação e desfecho}\\ \textbf{14 colunas}\\ {\tiny causa de óbito, seguimento, controles do arquivo}};
   \end{tikzpicture}
 
-  \vspace{0mm}
+  \vspace{1mm}
+  {\scriptsize \colorbox{boxcolor}{\strut\ \ } \,sinais (dois registros por paciente) \quad
+  \fcolorbox{azulesc}{white}{\strut\ \ } \,dados clínicos, em grupos (tabela de 105 colunas)\par}
+\end{frame}
+
+% 17c
+\begin{frame}{Os dados que serão usados}
+  \centering
+  \begin{tikzpicture}[
+      caixa/.style={rectangle, rounded corners=2pt, draw, minimum width=3.25cm, text width=3.05cm, minimum height=1.3cm, align=center, inner sep=1.5pt, font=\scriptsize},
+      usa/.style={fill=boxcolor, draw=azulesc},
+      nao/.style={fill=white, draw=cinza, text=cinza},
+      sinal/.style={fill=boxcolor, draw=azulesc},
+      clin/.style={fill=white, draw=azulesc},
+      ctl/.style={fill=white, draw=cinza, text=cinza}]
+    ]
+    \node[caixa, usa] at (0.00,0.00) {\textbf{Sinal do Holter 24 h}\\ {\color{azulesc}\textbf{936 pacientes}}\\ {\tiny derivações X, Y e Z, 200 Hz}};
+    \node[caixa, nao] at (3.38,0.00) {\textbf{ECG de alta resolução}\\ \textbf{687 pacientes}\\ {\tiny registro separado do Holter}};
+    \node[caixa, usa] at (6.76,0.00) {\textbf{Variáveis clínicas}\\ {\color{azulesc}\textbf{6 variáveis}}\\ {\tiny idade, gênero, NYHA, ondas Q, TVNS, taquiarritmia SV}};
+    \node[caixa, usa] at (10.14,0.00) {\textbf{Ecocardiograma e radiografia}\\ {\color{azulesc}\textbf{9 variáveis}}\\ {\tiny FEVE, átrio, diâmetros do ventrículo}};
+    \node[caixa, usa] at (0.00,-1.45) {\textbf{ECG de repouso}\\ {\color{azulesc}\textbf{7 variáveis}}\\ {\tiny PR, QRS, QT, QTc, hipertrofia, condução}};
+    \node[caixa, usa] at (3.38,-1.45) {\textbf{Laboratório: Pro-BNP}\\ {\color{azulesc}\textbf{1 variável}}\\ {\tiny peptídeo natriurético}};
+    \node[caixa, nao] at (6.76,-1.45) {\textbf{Exames de sangue}\\ \textbf{19 variáveis}\\ {\tiny creatinina, sódio, hemoglobina, glicose, colesterol}};
+    \node[caixa, nao] at (10.14,-1.45) {\textbf{Corpo e pressão}\\ \textbf{5 variáveis}\\ {\tiny peso, altura, IMC, pressão arterial}};
+    \node[caixa, nao] at (0.00,-2.90) {\textbf{Etiologia e histórico}\\ \textbf{9 variáveis}\\ {\tiny diabetes, hipertensão, infarto prévio, síncope}};
+    \node[caixa, nao] at (3.38,-2.90) {\textbf{Hábitos}\\ \textbf{4 variáveis}\\ {\tiny cigarros por dia, tempo sem fumar, álcool}};
+    \node[caixa, nao] at (6.76,-2.90) {\textbf{Medicações}\\ \textbf{13 variáveis}\\ {\tiny betabloqueador, amiodarona, diuréticos, estatina}};
+    \node[caixa, nao] at (10.14,-2.90) {\textbf{Outras imagens}\\ \textbf{3 variáveis}\\ {\tiny valva mitral, fluxo mitral, congestão pulmonar}};
+    \node[caixa, nao] at (0.00,-4.35) {\textbf{Holter tabulado}\\ \textbf{15 variáveis}\\ {\tiny SDNN, RMSSD, pNN50, extrassístoles, dupletes}};
+    \node[caixa, nao] at (3.38,-4.35) {\textbf{Identificação e desfecho}\\ \textbf{14 colunas}\\ {\tiny causa de óbito, seguimento, controles do arquivo}};
+  \end{tikzpicture}
+
+  \vspace{1mm}
   {\scriptsize
   \colorbox{boxcolor}{\strut\ \ } \,usado neste trabalho \quad
-  \fcolorbox{cinza}{white}{\strut\ \ } \,não usado \qquad
-  {\color{cinza} Mais 14 colunas de identificação, desfecho e controle (não são preditoras).}\par}
+  \fcolorbox{cinza}{white}{\strut\ \ } \,não usado\par}
 \end{frame}
 
 % 17b
