@@ -460,45 +460,56 @@
   \centering
   \begin{tikzpicture}[x=1cm,y=1cm]
     \folder{0.00}{0.00}{Sinal do Holter 24 h}
-    \draw[azulesc, line width=0.5pt] (0.14,-0.20) -- (0.14,-1.19);
-    \draw[azulesc, line width=0.5pt] (0.14,-0.43) -- (0.38,-0.43) node[right, font=\small, text=black, inner sep=2pt] {Derivações X, Y e Z};
-    \draw[azulesc, line width=0.5pt] (0.14,-0.81) -- (0.38,-0.81) node[right, font=\small, text=black, inner sep=2pt] {200 Hz};
-    \draw[azulesc, line width=0.5pt] (0.14,-1.19) -- (0.38,-1.19) node[right, font=\small, text=black, inner sep=2pt] {24 horas};
-    \folder{0.00}{-1.77}{Variáveis clínicas (6)}
-    \draw[azulesc, line width=0.5pt] (0.14,-1.97) -- (0.14,-4.10);
-    \draw[azulesc, line width=0.5pt] (0.14,-2.20) -- (0.38,-2.20) node[right, font=\small, text=black, inner sep=2pt] {Idade};
-    \draw[azulesc, line width=0.5pt] (0.14,-2.58) -- (0.38,-2.58) node[right, font=\small, text=black, inner sep=2pt] {Gênero};
-    \draw[azulesc, line width=0.5pt] (0.14,-2.96) -- (0.38,-2.96) node[right, font=\small, text=black, inner sep=2pt] {Classe NYHA};
-    \draw[azulesc, line width=0.5pt] (0.14,-3.34) -- (0.38,-3.34) node[right, font=\small, text=black, inner sep=2pt] {Ondas Q (necrose)};
-    \draw[azulesc, line width=0.5pt] (0.14,-3.72) -- (0.38,-3.72) node[right, font=\small, text=black, inner sep=2pt] {TVNS};
-    \draw[azulesc, line width=0.5pt] (0.14,-4.10) -- (0.38,-4.10) node[right, font=\small, text=black, inner sep=2pt] {Taquiarritmia SV paroxística};
+    \draw[azulesc, line width=0.5pt] (0.14,-0.20) -- (0.14,-0.66);
+    \draw[azulesc, line width=0.5pt] (0.14,-0.35) -- (0.38,-0.35) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Derivações X, Y e Z};
+    \draw[azulesc, line width=0.5pt] (0.14,-0.66) -- (0.38,-0.66) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {200 Hz, 24 horas};
+    \folder{0.00}{-1.13}{Holter tabulado (10)}
+    \draw[azulesc, line width=0.5pt] (0.14,-1.33) -- (0.14,-4.27);
+    \draw[azulesc, line width=0.5pt] (0.14,-1.48) -- (0.38,-1.48) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {RR mínimo};
+    \draw[azulesc, line width=0.5pt] (0.14,-1.79) -- (0.38,-1.79) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {RR máximo};
+    \draw[azulesc, line width=0.5pt] (0.14,-2.10) -- (0.38,-2.10) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Amplitude do RR};
+    \draw[azulesc, line width=0.5pt] (0.14,-2.41) -- (0.38,-2.41) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Extrassístoles ventriculares};
+    \draw[azulesc, line width=0.5pt] (0.14,-2.72) -- (0.38,-2.72) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Dupletes};
+    \draw[azulesc, line width=0.5pt] (0.14,-3.03) -- (0.38,-3.03) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Extrassístoles supraventriculares};
+    \draw[azulesc, line width=0.5pt] (0.14,-3.34) -- (0.38,-3.34) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {SDNN};
+    \draw[azulesc, line width=0.5pt] (0.14,-3.65) -- (0.38,-3.65) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {SDANN};
+    \draw[azulesc, line width=0.5pt] (0.14,-3.96) -- (0.38,-3.96) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {RMSSD};
+    \draw[azulesc, line width=0.5pt] (0.14,-4.27) -- (0.38,-4.27) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {pNN50};
     \folder{4.70}{0.00}{Ecocardiograma e radiografia (9)}
-    \draw[azulesc, line width=0.5pt] (4.84,-0.20) -- (4.84,-3.47);
-    \draw[azulesc, line width=0.5pt] (4.84,-0.43) -- (5.08,-0.43) node[right, font=\small, text=black, inner sep=2pt] {FEVE};
-    \draw[azulesc, line width=0.5pt] (4.84,-0.81) -- (5.08,-0.81) node[right, font=\small, text=black, inner sep=2pt] {Átrio esquerdo};
-    \draw[azulesc, line width=0.5pt] (4.84,-1.19) -- (5.08,-1.19) node[right, font=\small, text=black, inner sep=2pt] {Diâmetro diastólico do VE};
-    \draw[azulesc, line width=0.5pt] (4.84,-1.57) -- (5.08,-1.57) node[right, font=\small, text=black, inner sep=2pt] {Diâmetro sistólico do VE};
-    \draw[azulesc, line width=0.5pt] (4.84,-1.95) -- (5.08,-1.95) node[right, font=\small, text=black, inner sep=2pt] {Espessura do septo};
-    \draw[azulesc, line width=0.5pt] (4.84,-2.33) -- (5.08,-2.33) node[right, font=\small, text=black, inner sep=2pt] {Espessura da parede posterior};
-    \draw[azulesc, line width=0.5pt] (4.84,-2.71) -- (5.08,-2.71) node[right, font=\small, text=black, inner sep=2pt] {Diâmetro diastólico do VD};
-    \draw[azulesc, line width=0.5pt] (4.84,-3.09) -- (5.08,-3.09) node[right, font=\small, text=black, inner sep=2pt] {Contratilidade do VD};
-    \draw[azulesc, line width=0.5pt] (4.84,-3.47) -- (5.08,-3.47) node[right, font=\small, text=black, inner sep=2pt] {Índice cardiotorácico};
-    \folder{9.50}{0.00}{ECG de repouso (7)}
-    \draw[azulesc, line width=0.5pt] (9.64,-0.20) -- (9.64,-2.71);
-    \draw[azulesc, line width=0.5pt] (9.64,-0.43) -- (9.88,-0.43) node[right, font=\small, text=black, inner sep=2pt] {Intervalo PR};
-    \draw[azulesc, line width=0.5pt] (9.64,-0.81) -- (9.88,-0.81) node[right, font=\small, text=black, inner sep=2pt] {Duração do QRS};
-    \draw[azulesc, line width=0.5pt] (9.64,-1.19) -- (9.88,-1.19) node[right, font=\small, text=black, inner sep=2pt] {QRS $>$ 120 ms};
-    \draw[azulesc, line width=0.5pt] (9.64,-1.57) -- (9.88,-1.57) node[right, font=\small, text=black, inner sep=2pt] {Intervalo QT};
-    \draw[azulesc, line width=0.5pt] (9.64,-1.95) -- (9.88,-1.95) node[right, font=\small, text=black, inner sep=2pt] {QT corrigido};
-    \draw[azulesc, line width=0.5pt] (9.64,-2.33) -- (9.88,-2.33) node[right, font=\small, text=black, inner sep=2pt] {Hipertrofia do VE};
-    \draw[azulesc, line width=0.5pt] (9.64,-2.71) -- (9.88,-2.71) node[right, font=\small, text=black, inner sep=2pt] {Distúrbio de condução};
-    \folder{9.50}{-3.29}{Laboratório (1)}
-    \draw[azulesc, line width=0.5pt] (9.64,-3.49) -- (9.64,-3.72);
-    \draw[azulesc, line width=0.5pt] (9.64,-3.72) -- (9.88,-3.72) node[right, font=\small, text=black, inner sep=2pt] {Pro-BNP};
+    \draw[azulesc, line width=0.5pt] (4.84,-0.20) -- (4.84,-2.83);
+    \draw[azulesc, line width=0.5pt] (4.84,-0.35) -- (5.08,-0.35) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {FEVE};
+    \draw[azulesc, line width=0.5pt] (4.84,-0.66) -- (5.08,-0.66) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Átrio esquerdo};
+    \draw[azulesc, line width=0.5pt] (4.84,-0.97) -- (5.08,-0.97) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Diâmetro diastólico do VE};
+    \draw[azulesc, line width=0.5pt] (4.84,-1.28) -- (5.08,-1.28) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Diâmetro sistólico do VE};
+    \draw[azulesc, line width=0.5pt] (4.84,-1.59) -- (5.08,-1.59) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Espessura do septo};
+    \draw[azulesc, line width=0.5pt] (4.84,-1.90) -- (5.08,-1.90) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Espessura da parede posterior};
+    \draw[azulesc, line width=0.5pt] (4.84,-2.21) -- (5.08,-2.21) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Diâmetro diastólico do VD};
+    \draw[azulesc, line width=0.5pt] (4.84,-2.52) -- (5.08,-2.52) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Contratilidade do VD};
+    \draw[azulesc, line width=0.5pt] (4.84,-2.83) -- (5.08,-2.83) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Índice cardiotorácico};
+    \folder{4.70}{-3.30}{Laboratório (1)}
+    \draw[azulesc, line width=0.5pt] (4.84,-3.50) -- (4.84,-3.65);
+    \draw[azulesc, line width=0.5pt] (4.84,-3.65) -- (5.08,-3.65) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Pro-BNP};
+    \folder{9.50}{0.00}{Variáveis clínicas (6)}
+    \draw[azulesc, line width=0.5pt] (9.64,-0.20) -- (9.64,-1.90);
+    \draw[azulesc, line width=0.5pt] (9.64,-0.35) -- (9.88,-0.35) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Idade};
+    \draw[azulesc, line width=0.5pt] (9.64,-0.66) -- (9.88,-0.66) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Gênero};
+    \draw[azulesc, line width=0.5pt] (9.64,-0.97) -- (9.88,-0.97) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Classe NYHA};
+    \draw[azulesc, line width=0.5pt] (9.64,-1.28) -- (9.88,-1.28) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Ondas Q (necrose)};
+    \draw[azulesc, line width=0.5pt] (9.64,-1.59) -- (9.88,-1.59) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {TVNS};
+    \draw[azulesc, line width=0.5pt] (9.64,-1.90) -- (9.88,-1.90) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Taquiarritmia SV paroxística};
+    \folder{9.50}{-2.37}{ECG de repouso (7)}
+    \draw[azulesc, line width=0.5pt] (9.64,-2.57) -- (9.64,-4.58);
+    \draw[azulesc, line width=0.5pt] (9.64,-2.72) -- (9.88,-2.72) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Intervalo PR};
+    \draw[azulesc, line width=0.5pt] (9.64,-3.03) -- (9.88,-3.03) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Duração do QRS};
+    \draw[azulesc, line width=0.5pt] (9.64,-3.34) -- (9.88,-3.34) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {QRS $>$ 120 ms};
+    \draw[azulesc, line width=0.5pt] (9.64,-3.65) -- (9.88,-3.65) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Intervalo QT};
+    \draw[azulesc, line width=0.5pt] (9.64,-3.96) -- (9.88,-3.96) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {QT corrigido};
+    \draw[azulesc, line width=0.5pt] (9.64,-4.27) -- (9.88,-4.27) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Hipertrofia do VE};
+    \draw[azulesc, line width=0.5pt] (9.64,-4.58) -- (9.88,-4.58) node[right, font=\footnotesize, text=black, inner sep=1.5pt] {Distúrbio de condução};
   \end{tikzpicture}
 
   \vspace{0mm}
-  {\scriptsize\color{cinza} Cada pasta é um dado da base; dentro dela, somente as variáveis usadas. ``Variáveis clínicas'' é a seleção feita neste trabalho.\par}
+  {\scriptsize\color{cinza} Dentro de cada pasta, somente as variáveis usadas. ``Variáveis clínicas'' é a seleção feita neste trabalho. O Holter tabulado é a referência para comparar com os marcadores extraídos do sinal.\par}
 \end{frame}
 
 % 17b
